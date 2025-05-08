@@ -26,9 +26,6 @@ public class AppDbContext : DbContext
 
             builder.Property(u => u.PasswordHash)
                    .IsRequired();  // Указываем, что PasswordHash обязательно
-
-            builder.Property(u => u.Role)
-                   .HasDefaultValue("User");  // Устанавливаем значение по умолчанию для Role
         });
 
         modelBuilder.Entity<ParticipantEvent>()

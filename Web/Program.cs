@@ -1,5 +1,12 @@
-using Microsoft.EntityFrameworkCore;
-using Infrastructure.Context;
+using Application.Services;
+using Domain.Abstractions;
+using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Web.Endpoints;
+using Web.Extensions;
 
 namespace Web;
 
@@ -9,6 +16,11 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
+
+        builder.Services
+            .AddApiAuthintication(builder.Configuration);
+
         // Add services to the container.
         builder.AddInfrastructureServices();
 
@@ -16,6 +28,10 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+        builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 
         var app = builder.Build();
 
@@ -28,7 +44,19 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseCookiePolicy(new CookiePolicyOptions
+        {
+            MinimumSameSitePolicy = SameSiteMode.Strict,
+            HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
+            Secure = CookieSecurePolicy.Always
+        });
+
+        app.UseRouting();
+
+        app.UseAuthentication();
         app.UseAuthorization();
+
+        app.MapUsersEndPoints();
 
         app.UseStaticFiles();
         app.UseDefaultFiles();

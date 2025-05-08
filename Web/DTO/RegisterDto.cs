@@ -1,3 +1,3 @@
 ﻿namespace Web.DTO;
 
-public record RegisterDto(string Username, string Password, string Role);
+public record RegisterDto(string Username, string Password);

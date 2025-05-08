@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Infrastructure.Context;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace Web.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class EventsController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -23,6 +25,7 @@ public class EventsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "AdminPolicy")]
     public async Task<IActionResult> Create(Event newEvent)
     {
         _context.Events.Add(newEvent);

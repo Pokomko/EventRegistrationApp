@@ -1,4 +1,5 @@
-﻿using Infrastructure.Context;
+﻿using Domain.Abstractions;
+using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -11,5 +12,8 @@ public static class DependencyInjection
     {
         builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
     }
 }

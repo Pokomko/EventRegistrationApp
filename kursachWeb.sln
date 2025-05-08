@@ -2,13 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "kursachweb.client", "kursachweb.client\kursachweb.client.esproj", "{E3137AA7-8900-B79F-F5BF-B394CE9FCC53}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kursachWeb.Server", "kursachWeb.Server\kursachWeb.Server.csproj", "{A7BFC120-2188-4C5F-B88B-F2FF8BF85066}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{24D67804-6765-4536-BF20-402C281A53EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{D35FA5E1-D22C-4330-83C3-572527CBA845}"
 EndProject
@@ -24,16 +18,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E3137AA7-8900-B79F-F5BF-B394CE9FCC53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E3137AA7-8900-B79F-F5BF-B394CE9FCC53}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E3137AA7-8900-B79F-F5BF-B394CE9FCC53}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{E3137AA7-8900-B79F-F5BF-B394CE9FCC53}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E3137AA7-8900-B79F-F5BF-B394CE9FCC53}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E3137AA7-8900-B79F-F5BF-B394CE9FCC53}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{A7BFC120-2188-4C5F-B88B-F2FF8BF85066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7BFC120-2188-4C5F-B88B-F2FF8BF85066}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7BFC120-2188-4C5F-B88B-F2FF8BF85066}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7BFC120-2188-4C5F-B88B-F2FF8BF85066}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D35FA5E1-D22C-4330-83C3-572527CBA845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D35FA5E1-D22C-4330-83C3-572527CBA845}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D35FA5E1-D22C-4330-83C3-572527CBA845}.Release|Any CPU.ActiveCfg = Release|Any CPU
