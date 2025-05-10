@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250508192124_UserEmailAndRolesSetup")]
+    partial class UserEmailAndRolesSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,7 +130,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            Name = "Create"
+                            Name = "Write"
                         },
                         new
                         {
@@ -183,33 +186,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("PermissionId");
 
                     b.ToTable("RolePermission");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 1
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 2
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 3
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissionId = 4
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissionId = 1
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>

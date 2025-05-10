@@ -15,17 +15,18 @@ public class UserService
         _passwordHasher = passwordHasher;
         _jwtProvider = jwtProvider;
     }
-    public async Task Register(string userName, string password) { 
+    public async Task Register(string userName, string password, string email) { 
         var hashedPassword = _passwordHasher.Generate(password); 
 
-        var user = User.Create(Guid.NewGuid(), userName, hashedPassword);
+        var user = User.Create(Guid.NewGuid(), userName, hashedPassword, email);
 
         await _userRepository.AddAsync(user);
         await _userRepository.SaveChangesAsync();
     }
 
-    public async Task<string> Login(string userName, string password) {
-        var user = await _userRepository.GetByUsernameAsync(userName);
+    public async Task<string> Login(string email, string password)
+    {
+        var user = await _userRepository.GetByEmailAsync(email);
 
         var result = _passwordHasher.Verify(password, user.PasswordHash);
 

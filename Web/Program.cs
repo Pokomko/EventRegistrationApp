@@ -1,5 +1,6 @@
 using Application.Services;
 using Domain.Abstractions;
+using Domain.Enum;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
@@ -7,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Web.Endpoints;
 using Web.Extensions;
+using Web.Helpers;
 
 namespace Web;
 
@@ -17,9 +19,24 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
+        builder.Services.Configure<AuthorizationOptions>(builder.Configuration.GetSection(nameof(AuthorizationOptions)));
+
+/*        var config = builder.Configuration.GetSection("AuthorizationOptions").Get<AuthorizationOptions>();
+        var parsed = RolePermissionParser.Parse(config);
+
+        foreach (var rp in parsed)
+        {
+            Console.WriteLine($"Parsed: RoleId={rp.RoleId}, PermissionId={rp.PermissionId}");
+        }*/
 
         builder.Services
             .AddApiAuthintication(builder.Configuration);
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminPolicy", policy =>
+                policy.Requirements.Add(new PermissionRequirment([PermissionsEnum.Create])));
+        });
 
         // Add services to the container.
         builder.AddInfrastructureServices();

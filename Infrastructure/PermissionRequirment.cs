@@ -1,6 +1,15 @@
-﻿namespace Infrastructure;
+﻿using Domain.Entities;
+using Domain.Enum;
+using Microsoft.AspNetCore.Authorization;
 
-public class PermissionRequirment
+namespace Infrastructure;
+
+public class PermissionRequirment : IAuthorizationRequirement
 {
+    public PermissionsEnum[] Permissions { get; set; } = [];
 
+    public PermissionRequirment(PermissionsEnum[] permissions)
+    {
+        Permissions = permissions;
+    }
 }
