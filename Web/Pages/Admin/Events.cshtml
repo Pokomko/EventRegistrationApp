@@ -1,0 +1,39 @@
+﻿@page
+@model Web.Pages.Admin.AdminModelIndex
+@{
+    Layout = "_Layout";
+}
+@section Styles {
+    <link rel="stylesheet" href="../css/admin.css">
+}
+
+<a href="/Logout" class="logout-button">Logout</a>
+
+<h1>Welcome, @Model.UserName</h1>
+
+@await Html.PartialAsync("_EventsTable", Model.Events)
+
+<h2>Add New Event</h2>
+<form method="post">
+    @Html.AntiForgeryToken()
+
+    <label for="EventTitle">Event Name</label>
+    <input name="EventTitle" type="text" id="EventTitle" required />
+
+    <label for="EventDescription">Event Description</label>
+    <input name="EventDescription" type="text" id="EventDescription" required />
+
+    <label for="EventDate">Event Date</label>
+    <input name="EventDate" id="EventDate" type="datetime-local" required />
+
+    <label for="EventLocation">Event Location</label>
+    <input name="EventLocation" type="text" id="EventLocation" required />
+
+    <label for="EventCategory">Event Category</label>
+    <input name="EventCategory" type="text" id="EventCategory" required />
+
+    <label for="EventMaxParticipants">Max Participants</label>
+    <input name="EventMaxParticipants" type="number" id="EventMaxParticipants" required />
+
+    <button class="submit" type="submit">Submit</button>
+</form>
