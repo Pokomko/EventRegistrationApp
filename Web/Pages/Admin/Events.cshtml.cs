@@ -1,17 +1,15 @@
-using Domain.Abstractions;
 using Domain.Entities;
-using Infrastructure.Context;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace Web.Pages.Admin;
 
 [Authorize(Policy = "AdminPolicy")]
 public class AdminModelIndex : PageModel
 {
-    public List<Event> Events { get; set; } = new();
+    public List<Event> Events { get; set; } = new List<Event>();
     public string UserName { get; set; } = string.Empty;
     public string UserRole { get; set; } = string.Empty;
 
@@ -33,24 +31,24 @@ public class AdminModelIndex : PageModel
     [BindProperty]
     public int EventMaxParticipants { get; set; }
 
-    private readonly IUserRepository _repository;
-    private readonly AppDbContext _context;
+    private readonly IUserRepository _userRepository;
+    private readonly IEventRepository _eventRepository;
 
-    public AdminModelIndex(AppDbContext context, IUserRepository repository)
+    public AdminModelIndex(IUserRepository userRepository , IEventRepository eventRepository)
     {
-        _context = context;
-        _repository = repository;
+        _userRepository = userRepository;
+        _eventRepository = eventRepository;
     }
 
     public async Task OnGetAsync()
     {
-        Events = await _context.Events.ToListAsync();
+        Events = await _eventRepository.GetAllEventsAsync();
 
         var userId = User.FindFirst("userId")?.Value;
 
         if (Guid.TryParse(userId, out var guid))
         {
-            var user = await _repository.GetByIdAsync(guid);
+            var user = await _userRepository.GetByIdAsync(guid);
             if (user != null)
             {
                 UserName = user.Username;
@@ -68,7 +66,7 @@ public class AdminModelIndex : PageModel
 
         if (!ModelState.IsValid)
         {
-            Events = await _context.Events.ToListAsync();
+            Events = await _eventRepository.GetAllEventsAsync();
             return Page();
         }
 
@@ -87,8 +85,7 @@ public class AdminModelIndex : PageModel
         newEvent.MaxParticipants = EventMaxParticipants;
         newEvent.ImageUrl = "path";
 
-        _context.Events.Add(newEvent);
-        await _context.SaveChangesAsync();
+        await _eventRepository.CreateEventAsync(newEvent);
 
         return RedirectToPage();
     }

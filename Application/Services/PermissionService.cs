@@ -1,5 +1,5 @@
-﻿using Domain.Abstractions;  // Подключение абстракций для работы с репозиториями.
-using Domain.Enum;          // Подключение перечислений прав пользователя.
+﻿using Domain.Enum;          // Подключение перечислений прав пользователя.
+using Application.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services

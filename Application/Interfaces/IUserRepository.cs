@@ -1,12 +1,12 @@
 ﻿using Domain.Entities;
 using Domain.Enum;
 
-namespace Domain.Abstractions;
+namespace Application.Interfaces;
 
 public interface IUserRepository
 {
     Task AddAsync(User user);
-    Task RegisterAsync(string username, string email, string password);
+    //Task RegisterAsync(string username, string email, string password);
     Task<User?> GetByIdAsync(Guid userId);
     Task<User?> GetByEmailAsync(string email);
     Task SaveChangesAsync();

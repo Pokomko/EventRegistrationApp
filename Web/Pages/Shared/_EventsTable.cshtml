@@ -3,21 +3,20 @@
 	var userRole = (string)ViewData["UserRole"];
 }
 
-<h2>Events List</h2>
+<h2>Список мероприятий</h2>
 
 <table>
 	<thead>
 		<tr>
-			<th>Title</th>
-			<th>Description</th>
-			<th>Start Date</th>
-			<th>Location</th>
-			<th>Category</th>
-			<th>Max Participants</th>
+			<th>Название мероприятия</th>
+			<th>Описание мероприятия</th>
+			<th>Дата начала</th>
+			<th>Место проведения</th>
+			<th>Категория мероприятия</th>
+			<th>Макс. количество участников</th>
 			@if (userRole == "Admin")
 			{
-				<th>Id</th>
-				<th>Action</th>
+				<th>Действия</th>
 			}
 		</tr>
 	</thead>
@@ -34,7 +33,6 @@
 
 				@if (userRole == "Admin")
 				{
-					<td>@eventItem.Id</td>
 					<td>
 						<!-- Кнопка для изменения -->
 						<button class="btn btn-primary" onclick="editEvent('@eventItem.Id')">Изменить</button>

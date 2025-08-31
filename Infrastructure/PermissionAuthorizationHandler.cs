@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using Domain.Abstractions;
+using Application.Interfaces;
 
 namespace Infrastructure;
 

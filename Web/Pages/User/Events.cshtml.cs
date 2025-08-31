@@ -1,9 +1,7 @@
-using Domain.Abstractions;
 using Domain.Entities;
-using Infrastructure.Context;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace Web.Pages.User;
 
@@ -13,18 +11,18 @@ public class UserModelIndex: PageModel
     public List<Event> Events { get; set; } = new List<Event>();
     public string UserName { get; set; } = string.Empty;
 
-    private readonly IUserRepository _repository;
-    private readonly AppDbContext _context;
+    private readonly IUserRepository _userRepository;
+    private readonly IEventRepository _eventRepository;
 
-    public UserModelIndex(AppDbContext context, IUserRepository repository)
+    public UserModelIndex(IUserRepository userRepository, IEventRepository eventRepository)
     {
-        _repository = repository;
-        _context = context;
+        _userRepository = userRepository;
+        _eventRepository = eventRepository;
     }
 
     public async Task OnGetAsync()
     {
-        Events = await _context.Events.ToListAsync();
+        Events = await _eventRepository.GetAllEventsAsync();
 
         var userId = User.FindFirst("userId")?.Value;
 
@@ -32,7 +30,7 @@ public class UserModelIndex: PageModel
         {
             if (Guid.TryParse(userId, out var id))
             {
-                var user = await _repository.GetByIdAsync(id);
+                var user = await _userRepository.GetByIdAsync(id);
 
                 if (user != null)
                 {

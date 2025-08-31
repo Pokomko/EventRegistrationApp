@@ -43,9 +43,9 @@ namespace Web.Pages
 
             try
             {
-                await _service.Register(UserName, Password, Email);
+                await _service.RegisterAsync(UserName, Password, Email);
 
-                var token = await _service.Login(Email, Password);
+                var token = await _service.LoginAsync(Email, Password);
 
                 var handler = new JwtSecurityTokenHandler();
                 var jwt = handler.ReadJwtToken(token);

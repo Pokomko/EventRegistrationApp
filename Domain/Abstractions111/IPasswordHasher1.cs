@@ -1,7 +1,7 @@
 ﻿namespace Domain.Abstractions
 {
     // Интерфейс для хэширования паролей.
-    public interface IPasswordHasher
+    public interface IPasswordHasher1
     {
         // Метод для генерации хэшированного пароля из обычного.
         string Generate(string password);

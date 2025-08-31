@@ -1,16 +1,19 @@
-﻿using Domain.Abstractions;  // Подключение абстракций для работы с репозиториями и сервисами.
-using Domain.Entities;      // Подключение сущностей (например, для пользователя).
+﻿using Domain.Entities;      // Подключение сущностей (например, для пользователя).
+using Application.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Services
 {
     // Сервис для работы с пользователями, например, регистрация и аутентификация.
-    public class UserService
+    public class UserService : IUserService
     {
         // Репозиторий для работы с пользователями, используется для добавления и получения данных.
         private readonly IUserRepository _userRepository;
 
         // Сервис для хэширования паролей, чтобы хранить их безопасным образом.
+        
+        
+        
         private readonly IPasswordHasher _passwordHasher;
 
         // Сервис для генерации JWT-токенов (JSON Web Tokens) для аутентификации.
@@ -29,7 +32,7 @@ namespace Application.Services
         }
 
         // Метод для регистрации пользователя. Хэширует пароль и сохраняет нового пользователя.
-        public async Task Register(string userName, string password, string email)
+        public async Task RegisterAsync(string userName, string password, string email)
         {
             try
             {
@@ -55,9 +58,9 @@ namespace Application.Services
                 throw; // Перебрасываем исключение дальше.
             }
         }
-
+        
         // Метод для аутентификации пользователя. Проверяет пароль и генерирует JWT-токен.
-        public async Task<string> Login(string email, string password)
+        public async Task<string> LoginAsync(string email, string password)
         {
             try
             {

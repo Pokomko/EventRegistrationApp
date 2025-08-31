@@ -30,7 +30,7 @@ public class LoginModel : PageModel
     {
         try
         {
-            var token = await _service.Login(Email, Password);
+            var token = await _service.LoginAsync(Email, Password);
 
             var handler = new JwtSecurityTokenHandler();
             var jwt = handler.ReadJwtToken(token);

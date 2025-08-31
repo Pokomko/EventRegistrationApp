@@ -1,8 +1,6 @@
 ﻿using System.Text;
-using Application.Services;
-using Domain.Abstractions;
 using Domain.Enum;
-using Infrastructure;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +9,6 @@ namespace Web.Extensions;
 
 public static class ApiExtensions
 {
-
     public static void AddApiAuthintication(
         this IServiceCollection services,
         IConfiguration configuration) {

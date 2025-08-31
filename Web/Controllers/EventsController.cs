@@ -1,8 +1,7 @@
 ﻿using Domain.Entities;
-using Infrastructure.Context;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Web.Controllers;
 
@@ -11,16 +10,18 @@ namespace Web.Controllers;
 [Authorize]
 public class EventsController : ControllerBase
 {
-    private readonly AppDbContext _context;
-    public EventsController(AppDbContext context)
+    private readonly IEventRepository _eventRepository;
+    //private readonly AppDbContext _context;
+    public EventsController(IEventRepository eventRepository)
     {
-        _context = context;
+        _eventRepository = eventRepository;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Event>>> GetAll()
     {
-        var events = await _context.Events.ToListAsync();
+        var events = await _eventRepository.GetAllEventsAsync();
+        //var events = await _context.Events.ToListAsync();
         return Ok(events);
     }
 
@@ -28,15 +29,17 @@ public class EventsController : ControllerBase
     [Authorize(Policy = "AdminPolicy")]
     public async Task<IActionResult> Create(Event newEvent)
     {
-        _context.Events.Add(newEvent);
-        await _context.SaveChangesAsync();
+        await _eventRepository.CreateEventAsync(newEvent);
+        //_context.Events.Add(newEvent);
+        //await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetAll), new { id = newEvent.Id }, newEvent);
     }
 
     [HttpPut]
     [Authorize(Policy = "AdminPolicy")]
-    public async Task<IActionResult> Update(Event newEvent)
+    public async Task<IActionResult> Update(Event updatedEvent)
     {
+        await _eventRepository.EditEventAsync(updatedEvent);
         return Ok();
     }
 
@@ -44,16 +47,10 @@ public class EventsController : ControllerBase
     [Authorize(Policy = "AdminPolicy")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var eventToDelete = await _context.Events.FindAsync(id);
-
-        if (eventToDelete == null)
-        {
+        var isDeleted = await _eventRepository.DeleteEventAsync(id);
+        if (!isDeleted) {
             return NotFound();
         }
-
-        _context.Events.Remove(eventToDelete);
-        await _context.SaveChangesAsync();
-
         return NoContent();
     }
 }

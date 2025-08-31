@@ -1,6 +1,6 @@
-﻿using Domain.Abstractions;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Enum;
+using Application.Interfaces;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -68,7 +68,6 @@ public class UserRepository : IUserRepository
             throw;
         }
     }
-
 
     public async Task<User?> GetByIdAsync(Guid userId)
     {

@@ -1,6 +1,6 @@
 ﻿using Domain.Enum;
 
-namespace Domain.Abstractions;
+namespace Application.Interfaces;
 
 public interface IPermissionService
 {

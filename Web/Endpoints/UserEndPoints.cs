@@ -16,9 +16,9 @@ public static class UserEndPoints
     }
 
     public static async Task<IResult> Register (RegisterDto dto, UserService userService, HttpContext context) {
-        await userService.Register(dto.Username, dto.Password, dto.Email);
+        await userService.RegisterAsync(dto.Username, dto.Password, dto.Email);
 
-        var token = await userService.Login(dto.Email, dto.Password);
+        var token = await userService.LoginAsync(dto.Email, dto.Password);
         context.Response.Cookies.Append("kukuha", token);
 
         return Results.Ok();
@@ -26,7 +26,7 @@ public static class UserEndPoints
 
     public static async Task<IResult> Login(LoginDto dto, UserService userService, HttpContext context)
     {
-        var token = await userService.Login(dto.Email,dto.Password);
+        var token = await userService.LoginAsync(dto.Email,dto.Password);
 
         var handler = new JwtSecurityTokenHandler();
         var jwt = handler.ReadJwtToken(token);
