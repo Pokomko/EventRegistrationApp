@@ -6,7 +6,7 @@ namespace Domain.Abstractions;
 public interface IUserRepository
 {
     Task AddAsync(User user);
-
+    Task RegisterAsync(string username, string email, string password);
     Task<User?> GetByIdAsync(Guid userId);
     Task<User?> GetByEmailAsync(string email);
     Task SaveChangesAsync();
