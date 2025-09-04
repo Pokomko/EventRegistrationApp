@@ -21,7 +21,7 @@ public static class UserEndPoints
         var token = await userService.LoginAsync(dto.Email, dto.Password);
         context.Response.Cookies.Append("kukuha", token);
 
-        return Results.Ok();
+        return Results.Ok(new { redirect = "/User/Events" });
     }
 
     public static async Task<IResult> Login(LoginDto dto, UserService userService, HttpContext context)
@@ -36,8 +36,8 @@ public static class UserEndPoints
 
         string redirectUrl = role switch
         {
-            "Admin" => "/admin/dashboard",
-            "User" => "/user/home",
+            "Admin" => "/Admin/Events",
+            "User" => "/User/Events",
             _ => "/"
         };
 
@@ -48,13 +48,14 @@ public static class UserEndPoints
 
     public static IResult Logout(HttpContext context)
     {
-        context.Response.Cookies.Append("kukuha", "", new CookieOptions
+        context.Response.Cookies.Delete("kukuha");
+/*        context.Response.Cookies.Append("kukuha", "", new CookieOptions
         {
             Expires = DateTime.UtcNow.AddDays(-1),
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Strict
-        });
+        });*/
 
         return Results.Ok(new { redirect = "api/Login" });
     }

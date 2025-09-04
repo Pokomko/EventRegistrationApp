@@ -1,5 +1,4 @@
 ﻿using Application.Interfaces;
-using Infrastructure;
 using Infrastructure.Context;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +16,5 @@ public static class DependencyInjection
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IEventRepository, EventRepository>();
-
-        builder.Services.AddAuthorizationCore(options =>
-        {
-            options.AddPolicy("AdminPolicy", policy =>
-                policy.Requirements.Add(new PermissionRequirment([PermissionsEnum.Create])));
-        });
     }
 }

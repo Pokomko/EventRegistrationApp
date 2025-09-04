@@ -44,6 +44,7 @@ public class AdminModelIndex : PageModel
     {
         Events = await _eventRepository.GetAllEventsAsync();
 
+/*        
         var userId = User.FindFirst("userId")?.Value;
 
         if (Guid.TryParse(userId, out var guid))
@@ -55,9 +56,9 @@ public class AdminModelIndex : PageModel
                 UserRole = user.Roles.FirstOrDefault().Name;     
             }
         }
-
+*/
         ViewData["Title"] = "Admin - Manage Events";
-        ViewData["UserRole"] = UserRole;
+        ViewData["UserRole"] = "Admin";
     }
 
     public async Task<IActionResult> OnPostAsync()

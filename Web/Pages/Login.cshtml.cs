@@ -26,7 +26,7 @@ public class LoginModel : PageModel
         ViewData["Title"] = "Login";
     }
 
-    public async Task<IActionResult> OnPostAsync()
+/*    public async Task<IActionResult> OnPostAsync()
     {
         try
         {
@@ -56,5 +56,5 @@ public class LoginModel : PageModel
             ErrorMessage = "Неверный email или пароль.";
             return Page();
         }
-    }
+    }*/
 }

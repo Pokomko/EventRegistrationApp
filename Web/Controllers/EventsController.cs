@@ -10,18 +10,16 @@ namespace Web.Controllers;
 [Authorize]
 public class EventsController : ControllerBase
 {
-    private readonly IEventRepository _eventRepository;
-    //private readonly AppDbContext _context;
-    public EventsController(IEventRepository eventRepository)
+    private readonly IEventService _eventService;
+    public EventsController(IEventService eventService)
     {
-        _eventRepository = eventRepository;
+        _eventService = eventService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Event>>> GetAll()
     {
-        var events = await _eventRepository.GetAllEventsAsync();
-        //var events = await _context.Events.ToListAsync();
+        var events = await _eventService.GetAllEventsAsync();
         return Ok(events);
     }
 
@@ -29,9 +27,7 @@ public class EventsController : ControllerBase
     [Authorize(Policy = "AdminPolicy")]
     public async Task<IActionResult> Create(Event newEvent)
     {
-        await _eventRepository.CreateEventAsync(newEvent);
-        //_context.Events.Add(newEvent);
-        //await _context.SaveChangesAsync();
+        await _eventService.CreateEventAsync(newEvent);
         return CreatedAtAction(nameof(GetAll), new { id = newEvent.Id }, newEvent);
     }
 
@@ -39,7 +35,7 @@ public class EventsController : ControllerBase
     [Authorize(Policy = "AdminPolicy")]
     public async Task<IActionResult> Update(Event updatedEvent)
     {
-        await _eventRepository.EditEventAsync(updatedEvent);
+        await _eventService.EditEventAsync(updatedEvent);
         return Ok();
     }
 
@@ -47,7 +43,7 @@ public class EventsController : ControllerBase
     [Authorize(Policy = "AdminPolicy")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var isDeleted = await _eventRepository.DeleteEventAsync(id);
+        var isDeleted = await _eventService.DeleteEventAsync(id);
         if (!isDeleted) {
             return NotFound();
         }

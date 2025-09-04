@@ -34,7 +34,7 @@ namespace Web.Pages
             ViewData["Title"] = "Registration";
         }
 
-        public async Task<IActionResult> OnPostAsync()
+/*        public async Task<IActionResult> OnPostAsync()
         {
             if (Password != ConfirmPassword) {
                 ErrorMessage = "Пароли не совпадают";
@@ -71,6 +71,6 @@ namespace Web.Pages
                 ErrorMessage = "Произошла ошибка при регистрации: " + ex.Message;
                 return Page();
             }
-        }
+        }*/
     }
 }

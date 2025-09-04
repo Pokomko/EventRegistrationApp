@@ -10,10 +10,7 @@ namespace Application.Services
         // Репозиторий для работы с пользователями, используется для добавления и получения данных.
         private readonly IUserRepository _userRepository;
 
-        // Сервис для хэширования паролей, чтобы хранить их безопасным образом.
-        
-        
-        
+        // Сервис для хэширования паролей, чтобы хранить их безопасным образом
         private readonly IPasswordHasher _passwordHasher;
 
         // Сервис для генерации JWT-токенов (JSON Web Tokens) для аутентификации.

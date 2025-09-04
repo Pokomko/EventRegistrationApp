@@ -2,6 +2,7 @@ using Domain.Entities;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Application.Services;
 
 namespace Web.Pages.User;
 
@@ -12,19 +13,19 @@ public class UserModelIndex: PageModel
     public string UserName { get; set; } = string.Empty;
 
     private readonly IUserRepository _userRepository;
-    private readonly IEventRepository _eventRepository;
+    private readonly IEventService _eventService;
 
-    public UserModelIndex(IUserRepository userRepository, IEventRepository eventRepository)
+    public UserModelIndex(IUserRepository userRepository, IEventService eventService)
     {
         _userRepository = userRepository;
-        _eventRepository = eventRepository;
+        _eventService = eventService;
     }
 
     public async Task OnGetAsync()
     {
-        Events = await _eventRepository.GetAllEventsAsync();
+        Events = await _eventService.GetAllEventsAsync();
 
-        var userId = User.FindFirst("userId")?.Value;
+/*        var userId = User.FindFirst("userId")?.Value;
 
         if (!string.IsNullOrEmpty(userId))
         {
@@ -37,7 +38,7 @@ public class UserModelIndex: PageModel
                     UserName = user.Username;
                 }
             }
-        }
+        }*/
 
         ViewData["Title"] = "User - See Events";
     }

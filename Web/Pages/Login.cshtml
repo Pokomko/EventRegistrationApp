@@ -15,7 +15,7 @@
             @Model.ErrorMessage
         </div>
     }
-    <form method="post">
+    <form id="loginForm" method="post">
         @Html.AntiForgeryToken()
         <label for="Email">Электронная почта</label>
         <input type="text" id="Email" name="Email" required />
@@ -30,3 +30,30 @@
         <p>Нет аккаунта? <a href="/Registration">Зарегистрироваться</a></p>
     </div>
 </div>
+
+<script>
+    const form = document.getElementById('loginForm');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = {
+            email: document.getElementById('Email').value,
+            password: document.getElementById('Password').value
+        };
+
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            window.location.href = data.redirect;
+            console.log(data);
+        } else {
+            console.error('Ошибка логинации');
+        }
+    });
+</script>

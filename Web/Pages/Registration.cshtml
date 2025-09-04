@@ -15,7 +15,7 @@
             @Model.ErrorMessage
         </div>
     }
-    <form method="post">
+    <form id="registerForm" method="post">
         @Html.AntiForgeryToken()
 
         <label for="UserName">Имя пользователя</label>
@@ -37,3 +37,37 @@
         <p>Уже есть аккаунт? <a href="/Login">Войти</a></p>
     </div>
 </div>
+
+<script>
+    const form = document.getElementById('registerForm');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = {
+            username: document.getElementById('UserName').value,
+            email: document.getElementById('Email').value,
+            password: document.getElementById('Password').value,
+        };
+
+        const confirm = document.getElementById('ConfirmPassword').value
+
+        if (formData.password != confirm) {
+            console.log("Пароли не совпадают")
+            return
+        }
+
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+        } else {
+            console.error('Ошибка регистрации');
+        }
+    });
+</script>
