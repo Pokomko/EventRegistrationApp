@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Application.Services;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,11 +8,11 @@ namespace Web.Pages;
 
 public class LoginModel : PageModel
 {
-    private readonly UserService _service;
+    private readonly IUserService _userService;
 
-    public LoginModel(UserService service)
+    public LoginModel(IUserService userService)
     {
-        _service = service;
+        _userService = userService;
     }
 
     [BindProperty]

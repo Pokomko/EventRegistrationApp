@@ -1,7 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Application.Interfaces;
 using Application.Services;
-using Web.DTO;
+using Application.DTO;
+using Web.Servicies;
 
 namespace Web.Endpoints;
 
@@ -15,47 +17,26 @@ public static class UserEndPoints
         return app;
     }
 
-    public static async Task<IResult> Register (RegisterDto dto, UserService userService, HttpContext context) {
-        await userService.RegisterAsync(dto.Username, dto.Password, dto.Email);
+    public static async Task<IResult> Register (RegisterDto dto, IAuthService authService) 
+    {
+        await authService.RegisterAsync(dto);
 
-        var token = await userService.LoginAsync(dto.Email, dto.Password);
-        context.Response.Cookies.Append("kukuha", token);
+        var loginDto = new LoginDto(dto.Email, dto.Password);
+        var result = await authService.LoginAsync(loginDto);
 
-        return Results.Ok(new { redirect = "/User/Events" });
+        return Results.Ok(new { redirect = result.RedirectUrl });
     }
 
-    public static async Task<IResult> Login(LoginDto dto, UserService userService, HttpContext context)
+    public static async Task<IResult> Login(LoginDto dto, IAuthService authService)
     {
-        var token = await userService.LoginAsync(dto.Email,dto.Password);
+        var result = await authService.LoginAsync(dto);
 
-        var handler = new JwtSecurityTokenHandler();
-        var jwt = handler.ReadJwtToken(token);
-        var roles = jwt.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
-
-        var role = roles.FirstOrDefault(); // или логика выбора основной роли
-
-        string redirectUrl = role switch
-        {
-            "Admin" => "/Admin/Events",
-            "User" => "/User/Events",
-            _ => "/"
-        };
-
-        context.Response.Cookies.Append("kukuha", token);
-
-        return Results.Ok(new { redirect = redirectUrl });
+        return Results.Ok(new { redirect = result.RedirectUrl });
     }
 
-    public static IResult Logout(HttpContext context)
+    public static IResult Logout(ICookieService cookieService)
     {
-        context.Response.Cookies.Delete("kukuha");
-/*        context.Response.Cookies.Append("kukuha", "", new CookieOptions
-        {
-            Expires = DateTime.UtcNow.AddDays(-1),
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict
-        });*/
+        cookieService.DeleteAuthCookie("kukuha");
 
         return Results.Ok(new { redirect = "api/Login" });
     }

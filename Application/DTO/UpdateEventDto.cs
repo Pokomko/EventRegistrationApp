@@ -1,7 +1,8 @@
-﻿namespace Web.DTO;
+﻿namespace Application.DTO;
 
-public class EventDto
+public class UpdateEventDto
 {
+    public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime StartDateTime { get; set; }

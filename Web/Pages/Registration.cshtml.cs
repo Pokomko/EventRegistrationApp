@@ -1,6 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Application.Services;
+﻿using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,24 +6,27 @@ namespace Web.Pages
 {
     public class RegistrationModel : PageModel
     {
-        private readonly UserService _service;
+        private readonly IUserService _userService;
 
-        public RegistrationModel(UserService service)
+        public RegistrationModel(IUserService userService)
         {
-            _service = service;
+            _userService = userService;
         }
 
         [BindProperty]
-        public string UserName { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
 
         [BindProperty]
-        public string Email { get; set; } = string.Empty;
+        public string SecondName { get; set; } = string.Empty;
 
         [BindProperty]
         public string Password { get; set; } = string.Empty;
 
         [BindProperty]
         public string ConfirmPassword { get; set; } = string.Empty;
+
+        [BindProperty]
+        public string Email { get; set; } = string.Empty;
 
         public string ErrorMessage { get; set; } = string.Empty;
 

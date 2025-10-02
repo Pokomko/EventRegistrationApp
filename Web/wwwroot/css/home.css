@@ -1,0 +1,44 @@
+﻿.landing-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.landing-container h2 {
+    margin-bottom: 20px;
+}
+
+.landing-container p {
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+.landing-container .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    margin-right: 10px;
+    transition: 0.3s;
+}
+
+.landing-container .btn-login {
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+
+.landing-container .btn-login:hover {
+    background-color: #218838;
+}
+
+.landing-container .btn-register {
+    background-color: transparent;
+    border: 1px solid #28a745;
+    color: #28a745;
+}
+
+.landing-container .btn-register:hover {
+    background-color: #28a745;
+    color: white;
+}

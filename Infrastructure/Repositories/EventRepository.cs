@@ -1,8 +1,10 @@
 ﻿using Domain.Entities;
 using Application.Interfaces;
 using Infrastructure.Context;
+using Application.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories;
 
@@ -26,6 +28,17 @@ public class EventRepository : IEventRepository
         }
         catch (Exception ex)
         {
+            throw;
+        }
+    }
+
+    public async Task<Event> GetEventByIdAsync(Guid eventId)
+    {
+        try
+        {
+            return await _context.Events.FirstOrDefaultAsync(e => e.Id == eventId);
+        }
+        catch (Exception ex) {
             throw;
         }
     }
@@ -60,8 +73,31 @@ public class EventRepository : IEventRepository
         }
     }
 
-    public Task EditEventAsync(Event updatedEvent)
+    public async Task EditEventAsync(UpdateEventDto updatedEvent)
     {
-        throw new NotImplementedException();
+        try {
+            var existingEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == updatedEvent.Id);
+
+            if (existingEvent == null)
+            {
+                throw new KeyNotFoundException($"Event with Id {updatedEvent.Id} not found.");
+            }
+
+            existingEvent.Title = updatedEvent.Title;
+            existingEvent.Description = updatedEvent.Description;
+            existingEvent.StartDateTime = updatedEvent.StartDateTime;
+            existingEvent.Location = updatedEvent.Location;
+            existingEvent.Category = updatedEvent.Category;
+            existingEvent.MaxParticipants = updatedEvent.MaxParticipants;
+
+            // check existingEvent.MaxParticipants > updatedEvent.MaxParticipants; !!!
+
+            _context.Events.Update(existingEvent);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex) {
+            throw;
+        }
+
     }
 }

@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Application.DTO;
 
 namespace Web.Controllers;
 
@@ -19,8 +20,15 @@ public class EventsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Event>>> GetAll()
     {
-        var events = await _eventService.GetAllEventsAsync();
-        return Ok(events);
+        var eventList = await _eventService.GetAllEventsAsync();
+        return Ok(eventList);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<IEnumerable<Event>>> GetById(Guid id)
+    {
+        var eventItem = await _eventService.GetEventByIdAsync(id);
+        return Ok(eventItem);
     }
 
     [HttpPost]
@@ -33,7 +41,7 @@ public class EventsController : ControllerBase
 
     [HttpPut]
     [Authorize(Policy = "AdminPolicy")]
-    public async Task<IActionResult> Update(Event updatedEvent)
+    public async Task<IActionResult> Update(UpdateEventDto updatedEvent)
     {
         await _eventService.EditEventAsync(updatedEvent);
         return Ok();

@@ -2,13 +2,79 @@
 @model Web.Pages.User.UserModelIndex
 @{
 	Layout = "_Layout";
+	ViewData["Title"] = Model.IsAdmin ? "Admin - Manage Events" : "User - See Events";
 }
 @section Styles {
-	<link rel="stylesheet" href="../css/user.css"/>
+	<link rel="stylesheet" href="~/css/events.css"/>
 }
 
 <a href="/Logout" class="logout-button">Выйти</a>
 
-<h1>Welcome, @Model.UserName</h1>
+<h1>@ViewData["Title"]</h1>
+
+@if (Model.IsAdmin) {
+    <div class="button-wrapper">
+        <button id="openModalBtn" class="btn btn-primary">Добавить новое мероприятие</button>
+    </div>
+}
 
 @await Html.PartialAsync("_EventsTable", Model.Events)
+
+@if (Model.IsAdmin)
+
+    @await Html.PartialAsync("_AddEventModal")
+    @await Html.PartialAsync("_EditEventModal")
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById("modalOverlay");
+        const openBtn = document.getElementById("openModalBtn");
+        const closeBtn = document.getElementById("closeModalBtn");
+        const form = document.getElementById("addEventForm");
+
+        openBtn?.addEventListener("click", () => {
+            modal.style.display = "flex";
+        });
+
+        closeBtn?.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+
+        form?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const data = {
+                title: form.title.value,
+                description: form.description.value,
+                startDateTime: form.date.value,
+                location: form.location.value,
+                category: form.category.value,
+                maxParticipants: parseInt(form.maxParticipants.value)
+            };
+
+            const response = await fetch("/api/events", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert("Мероприятие успешно создано!");
+                modal.style.display = "none";
+                location.reload();
+            } else {
+                const error = await response.text();
+                alert("Ошибка: " + error);
+            }
+        });
+    });
+</script>

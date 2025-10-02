@@ -31,18 +31,18 @@ public class AdminModelIndex : PageModel
     [BindProperty]
     public int EventMaxParticipants { get; set; }
 
-    private readonly IUserRepository _userRepository;
-    private readonly IEventRepository _eventRepository;
+    private readonly IUserService _userService;
+    private readonly IEventService _eventService;
 
-    public AdminModelIndex(IUserRepository userRepository , IEventRepository eventRepository)
+    public AdminModelIndex(IUserService userService, IEventService eventService)
     {
-        _userRepository = userRepository;
-        _eventRepository = eventRepository;
+        _userService = userService;
+        _eventService = eventService;
     }
 
     public async Task OnGetAsync()
     {
-        Events = await _eventRepository.GetAllEventsAsync();
+        Events = await _eventService.GetAllEventsAsync();
 
 /*        
         var userId = User.FindFirst("userId")?.Value;
@@ -67,7 +67,7 @@ public class AdminModelIndex : PageModel
 
         if (!ModelState.IsValid)
         {
-            Events = await _eventRepository.GetAllEventsAsync();
+            Events = await _eventService.GetAllEventsAsync();
             return Page();
         }
 
@@ -86,7 +86,7 @@ public class AdminModelIndex : PageModel
         newEvent.MaxParticipants = EventMaxParticipants;
         newEvent.ImageUrl = "path";
 
-        await _eventRepository.CreateEventAsync(newEvent);
+        await _eventService.CreateEventAsync(newEvent);
 
         return RedirectToPage();
     }

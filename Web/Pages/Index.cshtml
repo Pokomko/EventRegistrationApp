@@ -2,19 +2,23 @@
 @model Web.Pages.IndexModel
 @{
     ViewData["Title"] = "Главная";
+    Layout = "_Layout";
 }
 
-<div style="text-align: center">
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" />
+}
+
+<div class="landing-container">
     <h2>Добро пожаловать!</h2>
 
     <p>Выберите одно из следующих действий:</p>
 
-    <a href="https://localhost:7159/Login" style="padding: 10px 20px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+    <a href="/Login" class="btn btn-login">
         Войти
     </a>
 
-    <a href="https://localhost:7159/Registration" style="padding: 10px 20px; background-color: transparent; border: 1px solid #28a745; color: #28a745; text-decoration: none; border-radius: 5px;">
+    <a href="/Registration" class="btn btn-register">
         Зарегистрироваться
     </a>
 </div>
-

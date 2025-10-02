@@ -1,0 +1,18 @@
+﻿@{
+}
+
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal">
+        <button class="close" id="closeModalBtn">&times;</button>
+        <h2 id="modalTitle">Изменить мероприятие</h2>
+        <form id="editEventForm">
+            <input name="title" placeholder="Название мероприятия" required />
+            <input name="description" placeholder="Описание" required />
+            <input name="date" type="date" required />
+            <input name="location" placeholder="Место проведения" required />
+            <input name="category" placeholder="Категория" required />
+            <input name="maxParticipants" type="number" min="1" required />
+            <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
+        </form>
+    </div>
+</div>
