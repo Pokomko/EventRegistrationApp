@@ -19,7 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<Participant> Participants => Set<Participant>();
     public DbSet<ParticipantEvent> ParticipantEvents => Set<ParticipantEvent>();
     public DbSet<User> Users => Set<User>();
-    public DbSet<Role> Role => Set<Role>();
+    public DbSet<Role> Roles => Set<Role>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,6 +47,11 @@ public class AppDbContext : DbContext
                     l => l.HasOne<Role>().WithMany().HasForeignKey(r => r.RoleId),
                     r => r.HasOne<User>().WithMany().HasForeignKey(u => u.UserId)
                 );
+
+            builder.HasOne(u => u.Participant)
+                .WithOne(p => p.User)
+                .HasForeignKey<Participant>(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Role>(builder =>
@@ -84,17 +89,23 @@ public class AppDbContext : DbContext
             builder.HasData(permissions);
         });
 
+        modelBuilder.Entity<Event>()
+            .Property(e => e.StartDateTime)
+            .HasColumnType("datetime2(0)");
+
         modelBuilder.Entity<ParticipantEvent>()
             .HasKey(pe => new { pe.ParticipantId, pe.EventId });
 
         modelBuilder.Entity<ParticipantEvent>()
             .HasOne(pe => pe.Participant)
             .WithMany(p => p.ParticipantEvents)
-            .HasForeignKey(pe => pe.ParticipantId);
+            .HasForeignKey(pe => pe.ParticipantId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<ParticipantEvent>()
             .HasOne(pe => pe.Event)
             .WithMany(e => e.ParticipantEvents)
-            .HasForeignKey(pe => pe.EventId);
+            .HasForeignKey(pe => pe.EventId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

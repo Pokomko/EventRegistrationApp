@@ -14,28 +14,66 @@
 
 @if (Model.IsAdmin) {
     <div class="button-wrapper">
-        <button id="openModalBtn" class="btn btn-primary">Добавить новое мероприятие</button>
+        <button id="openModalBtn" class="btn btn-primary" onclick="openCreateModal()">Добавить новое мероприятие</button>
     </div>
 }
 
 @await Html.PartialAsync("_EventsTable", Model.Events)
 
-@if (Model.IsAdmin)
-
-    @await Html.PartialAsync("_AddEventModal")
-    @await Html.PartialAsync("_EditEventModal")
+@if (Model.IsAdmin){
+    @await Html.PartialAsync("_eventModal")
 }
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById("modalOverlay");
-        const openBtn = document.getElementById("openModalBtn");
+        const form = document.getElementById("eventForm");
+        const modalTitle = document.getElementById("modalTitle");
+        const submitBtn = document.getElementById("submitBtn");
         const closeBtn = document.getElementById("closeModalBtn");
-        const form = document.getElementById("addEventForm");
 
-        openBtn?.addEventListener("click", () => {
+        window.openCreateModal = () => {
+            const modal = document.getElementById("modalOverlay");
+            const form = document.getElementById("eventForm");
+
+            form.reset();
+            form.querySelector("[name='id']").value = "";
+
+            modal.querySelector("#modalTitle").textContent = "Добавить мероприятие";
+            modal.querySelector("#submitBtn").textContent = "Создать";
+
+            modal.dataset.mode = "create";
+
             modal.style.display = "flex";
-        });
+        };
+
+        window.openEditModal = async (eventId) => {
+            const response = await fetch(`/api/Events/${eventId}`);
+            if (!response.ok) {
+                alert("Ошибка при получении данных о мероприятии!");
+                return;
+            }
+
+            const eventData = await response.json();
+
+            form.querySelector("[name='id']").value = eventData.id;
+            form.querySelector("[name='title']").value = eventData.title;
+            form.querySelector("[name='description']").value = eventData.description;
+
+            const dt = new Date(eventData.startDateTime);
+            const valueForInput = dt.toISOString().slice(0,16); // YYYY-MM-DDTHH:MM
+            form.querySelector("[name='startDateTime']").value = valueForInput;
+
+            form.querySelector("[name='location']").value = eventData.location;
+            form.querySelector("[name='category']").value = eventData.category;
+            form.querySelector("[name='maxParticipants']").value = eventData.maxParticipants;
+
+            modalTitle.textContent = "Редактировать мероприятие";
+            submitBtn.textContent = "Сохранить изменения";
+            modal.dataset.mode = "edit";
+
+            modal.style.display = "flex";
+        };
 
         closeBtn?.addEventListener("click", () => {
             modal.style.display = "none";
@@ -50,17 +88,24 @@
         form?.addEventListener("submit", async (e) => {
             e.preventDefault();
 
+            const mode = modal.dataset.mode;
             const data = {
-                title: form.title.value,
-                description: form.description.value,
-                startDateTime: form.date.value,
-                location: form.location.value,
-                category: form.category.value,
-                maxParticipants: parseInt(form.maxParticipants.value)
+                title: form.querySelector("[name='title']").value,
+                description: form.querySelector("[name='description']").value,
+                startDateTime: form.querySelector("[name='startDateTime']").value,
+                location: form.querySelector("[name='location']").value,
+                category: form.querySelector("[name='category']").value,
+                maxParticipants: parseInt(form.querySelector("[name='maxParticipants']").value)
             };
 
+            let method = "POST";
+            if (mode === "edit") {
+                method = "PUT";
+                data.id = form.querySelector("[name='id']").value;
+            }
+
             const response = await fetch("/api/events", {
-                method: "POST",
+                method,
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -68,7 +113,7 @@
             });
 
             if (response.ok) {
-                alert("Мероприятие успешно создано!");
+                alert(mode === "edit" ? "Мероприятие обновлено!" : "Мероприятие создано!");
                 modal.style.display = "none";
                 location.reload();
             } else {

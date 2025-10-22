@@ -1,4 +1,4 @@
-using Domain.Entities;
+using Application.DTO;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +9,7 @@ namespace Web.Pages.Admin;
 [Authorize(Policy = "AdminPolicy")]
 public class AdminModelIndex : PageModel
 {
-    public List<Event> Events { get; set; } = new List<Event>();
+    public List<EventDto> Events { get; set; } = new List<EventDto>();
     public string UserName { get; set; } = string.Empty;
     public string UserRole { get; set; } = string.Empty;
 
@@ -63,7 +63,7 @@ public class AdminModelIndex : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        var newEvent = new Event();
+/*        var newEvent = new Event();
 
         if (!ModelState.IsValid)
         {
@@ -88,6 +88,6 @@ public class AdminModelIndex : PageModel
 
         await _eventService.CreateEventAsync(newEvent);
 
-        return RedirectToPage();
+        */return RedirectToPage();
     }
 }

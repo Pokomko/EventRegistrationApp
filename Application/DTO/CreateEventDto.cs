@@ -1,8 +1,7 @@
 ﻿namespace Application.DTO;
 
-public class UpdateEventDto
+public class CreateEventDto
 {
-    public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime StartDateTime { get; set; }

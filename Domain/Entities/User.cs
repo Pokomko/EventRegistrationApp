@@ -7,6 +7,7 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public ICollection<Role> Roles { get; set; } = [];
+    public Participant? Participant { get; set; }
 
     public static User Create(Guid id, string userName, string passwordHash, string email) {
         return new User { Id = id, Username = userName, PasswordHash = passwordHash, Email = email };

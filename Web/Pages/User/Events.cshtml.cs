@@ -1,5 +1,5 @@
 using Application.Interfaces;
-using Domain.Entities;
+using Application.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,7 +9,7 @@ namespace Web.Pages.User;
 [Authorize]
 public class UserModelIndex: PageModel
 {
-    public List<Event> Events { get; set; } = new List<Event>();
+    public List<EventDto> Events { get; set; } = new List<EventDto>();
     public string UserName { get; set; } = string.Empty;
     public bool IsAdmin => User.IsInRole("Admin");
 
@@ -43,37 +43,5 @@ public class UserModelIndex: PageModel
     public async Task OnGetAsync()
     {
         Events = await _eventService.GetAllEventsAsync();
-        ViewData["Title"] = IsAdmin ? "Admin - Manage Events" : "User - See Events";
-
-    }
-
-    public async Task<IActionResult> OnPostAsync()
-    {
-        var newEvent = new Event();
-
-        if (!ModelState.IsValid)
-        {
-            Events = await _eventService.GetAllEventsAsync();
-            return Page();
-        }
-
-        if (EventMaxParticipants <= 0)
-        {
-            ModelState.AddModelError("EventMaxParticipants", "Max participants must be greater than 0.");
-            return Page();
-        }
-
-        newEvent.Id = Guid.NewGuid();
-        newEvent.Title = EventTitle;
-        newEvent.Description = EventDescription;
-        newEvent.StartDateTime = EventDate;
-        newEvent.Location = EventLocation;
-        newEvent.Category = EventCategory;
-        newEvent.MaxParticipants = EventMaxParticipants;
-        newEvent.ImageUrl = "path";
-
-        await _eventService.CreateEventAsync(newEvent);
-
-        return RedirectToPage();
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Web.Pages.Shared
 {
-    public class _AddEventModalModel : PageModel
+    public class _EventModalModel : PageModel
     {
         public void OnGet()
         {

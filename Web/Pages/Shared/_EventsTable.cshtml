@@ -1,56 +1,50 @@
-﻿@model List<Domain.Entities.Event>
+﻿@model List<Application.DTO.EventDto>
 @{
 
 }
 
 <h2>Список мероприятий</h2>
 
-<table>
-    <thead>
-        <tr>
-            <th><span>Название мероприятия</span></th>
-            <th><span>Описание мероприятия</span></th>
-            <th><span>Дата, время</span></th>
-            <th><span>Место проведения</span></th>
-            <th><span>Категория мероприятия</span></th>
-            <th><span>Количество<br>участников</span></th>
+<div class="table">
+    <div class="table__row table__title-row">
+        <div class="table__cell table__cell--2">Название мероприятия</div>
+        <div class="table__cell table__cell--3">Описание мероприятия</div>
+        <div class="table__cell table__cell--1">Дата, время</div>
+        <div class="table__cell table__cell--2">Место проведения</div>
+        <div class="table__cell table__cell--1">Категория</div>
+        <div class="table__cell table__cell--1">Количество участников</div>
+        <div class="table__cell table__cell--1">Действия</div>
+    </div>
+
+    @foreach (var eventItem in Model)
+    {
+        <div class="table__row">
+            <div class="table__cell table__cell--2">@eventItem.Title</div>
+            <div class="table__cell table__cell--3">@eventItem.Description</div>
+            <div class="table__cell table__cell--1">@eventItem.StartDateTime.ToString("g")</div>
+            <div class="table__cell table__cell--2">@eventItem.Location</div>
+            <div class="table__cell table__cell--1">@eventItem.Category</div>
+            <div class="table__cell table__cell--1">@eventItem.Participants.Count/@eventItem.MaxParticipants</div>
+
             @if (User.IsInRole("Admin"))
             {
-                <th><span>Действия</span></th>
-            } else
-            {
-                <th><span>Действия</span></th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var eventItem in Model)
-        {
-            <tr>
-                <td>@eventItem.Title</td>
-                <td>@eventItem.Description</td>
-                <td>@eventItem.StartDateTime.ToString("g")</td>
-                <td>@eventItem.Location</td>
-                <td>@eventItem.Category</td>
-                <td>@eventItem.MaxParticipants</td>
-
-                @if (User.IsInRole("Admin"))
-                {
-                    <td>
-                        <button class="btn btn-info" onclick="editEvent('@eventItem.Id')">Изменить</button>
+                <div class="table__cell table__cell--1">
+                    <div class="table__btn-wrapper">
+                        <button class="btn btn-info" onclick="openEditModal('@eventItem.Id')">Изменить</button>
                         <button class="btn btn-danger" onclick="deleteEvent('@eventItem.Id')">Удалить</button>
-                    </td>
-                } else
-                {
-                    <td>
-                        <button class="btn btn-info" onclick="editEvent('@eventItem.Id')">Записаться</button>
-                    </td>
-                }
+                    </div>
+                </div>
+            } else {
+                <div class="table__cell table__cell--1">
+                    <div class="table__btn-wrapper">
+                        <button class="btn btn-info" onclick="registerParticipantForEvent('@eventItem.Id')">Записаться</button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
 
-            </tr>
-        }
-    </tbody>
-</table>
 
 <script>
     async function deleteEvent(eventId) {
@@ -70,24 +64,22 @@
             alert('Ошибка при удалении события!');
         }
     }
+    
+    async function registerParticipantForEvent(eventId) {
+        const url = `/api/EventRegistration/${eventId}`;
 
-    async function editEvent(eventId) {
-        const modal = document.getElementById("modalOverlay");
-        const openBtn = document.getElementById("openModalBtn");
-        const closeBtn = document.getElementById("closeModalBtn");
-
-        openBtn?.addEventListener("click", () => {
-            modal.style.display = "flex";
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
 
-        closeBtn?.addEventListener("click", () => {
-            modal.style.display = "none";
-        });
-
-        window.addEventListener("click", (e) => {
-            if (e.target === modal) {
-                modal.style.display = "none";
-            }
-        });
+        if (response.ok) {
+            alert('Успешная запись');
+            location.reload();
+        } else {
+            alert('Ошибка при записи на событие!');
+        }
     }
 </script>

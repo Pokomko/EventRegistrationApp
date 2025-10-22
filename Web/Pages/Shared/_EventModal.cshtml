@@ -5,10 +5,11 @@
     <div class="modal">
         <button class="close" id="closeModalBtn">&times;</button>
         <h2 id="modalTitle">Добавить мероприятие</h2>
-        <form id="addEventForm">
+        <form id="eventForm">
+            <input name="id" type="hidden"/>
             <input name="title" placeholder="Название мероприятия" required />
             <input name="description" placeholder="Описание" required />
-            <input name="date" type="date" required />
+            <input name="startDateTime" type="datetime-local" required />
             <input name="location" placeholder="Место проведения" required />
             <input name="category" placeholder="Категория" required />
             <input name="maxParticipants" type="number" min="1" required />

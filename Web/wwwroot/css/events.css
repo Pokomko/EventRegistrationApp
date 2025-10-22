@@ -1,16 +1,17 @@
 ﻿/* ===== БАЗОВЫЕ ===== */
 * {
+    padding: 0;
+    margin: 0;
     box-sizing: border-box;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f6f8;
-    margin: 0;
-    padding: 0;
 }
 
-h1, h2 {
+h1,
+h2 {
     text-align: center;
     color: #333;
     margin: 20px;
@@ -37,18 +38,13 @@ h1, h2 {
 }
 
 /* ===== ТАБЛИЦЫ ===== */
-table {
+/* table {
     width: 90%;
     margin: 20px auto;
     border-collapse: collapse;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-tr {
-    display: flex;
-    flex-wrap: nowrap;
 }
 
 tr:nth-child(even) {
@@ -59,28 +55,109 @@ tr:hover {
     background-color: #f1f1f1;
 }
 
-th, td {
+th,
+td {
     padding: 10px;
     text-align: left;
     border: 1px solid #ddd;
     text-align: center;
-    /* flex-shrink: 0; */
-    flex-grow: 0;
 }
 
 th {
     background-color: #f8f9fa;
     font-weight: bold;
-}
-
-/* th:nth-child(6), td:nth-child(6) {
-    flex-grow: 0;
 } */
-th:nth-child(7), td:nth-child(7) {
-    flex-grow: 1;
+
+
+/* /////////////////////////////////////////////////////////// */
+
+.table {
+    width: 95%;
+    margin: 20px auto;
+    border: 2px solid #ddd;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.table__title-row {
+    font-weight: bold;
+    text-align: center;
+}
 
+.table__row {
+    display: flex;
+    width: 100%;
+    border-bottom: 2px solid #ddd;
+}
+
+    .table__row:nth-child(even) {
+        /*мой цвет*/
+        background-color: #f4f8fb;
+        /* background-color: #fafafa; */
+        /* один из твоих цветов */
+    }
+
+        .table__row:nth-child(even):last-child {
+            border-radius: 8px;
+        }
+
+    .table__row:last-child {
+        border-bottom: none;
+    }
+
+.table__title-row .table__cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.table__cell {
+    border-collapse: collapse;
+    padding: 8px 10px;
+    border-right: 2px solid #ddd;
+    min-width: 0;
+    /*для того чтобы супер длинные слова не меняли ширину колонок*/
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /*эти 2 св-ва чтобы обрезать супер длинные слова*/
+}
+
+    .table__cell:last-child {
+        border-right: none;
+    }
+
+/* Коэффициенты flex */
+.table__cell--1 {
+    flex-grow: 1;
+    flex-basis: 0%;
+}
+
+.table__cell--2 {
+    flex-grow: 2;
+    flex-basis: 0%;
+}
+
+.table__cell--3 {
+    flex-grow: 3;
+    flex-basis: 0%;
+}
+
+.table__cell--4 {
+    flex-grow: 4;
+    flex-basis: 0%;
+}
+
+.table__btn-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 10px;
+}
+
+/* /////////////////////////////////////////////////////////// */
 
 
 .button-wrapper {
@@ -105,7 +182,7 @@ th:nth-child(7), td:nth-child(7) {
     cursor: pointer;
     text-decoration: none;
     font-weight: bold;
-    transition: background 0.2s;
+    transition: background-color 0.2s;
 }
 
 .btn-primary {
@@ -113,12 +190,14 @@ th:nth-child(7), td:nth-child(7) {
     color: white;
 }
 
-.btn-primary:hover {
-    background-color: #0056b3;
-}
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
 
 .btn-info {
-    background-color: #17a2b8;
+    /* твой цвет */
+    /* background-color: #17a2b8; */
+    background-color: #42c4d9;
     color: white;
 }
 
@@ -131,9 +210,9 @@ th:nth-child(7), td:nth-child(7) {
     color: white;
 }
 
-.btn-danger:hover {
-    background-color: #a71d2a;
-}
+    .btn-danger:hover {
+        background-color: #a71d2a;
+    }
 
 /* ===== ФОРМА (для админки вне модалки) ===== */
 .admin form {
@@ -172,10 +251,11 @@ th:nth-child(7), td:nth-child(7) {
 
 /* ====== МОДАЛКА ====== */
 .modal-overlay {
-    display: none; /* скрыто по умолчанию */
+    display: none;
+    /* скрыто по умолчанию */
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
     z-index: 1000;
@@ -187,7 +267,7 @@ th:nth-child(7), td:nth-child(7) {
     border-radius: 8px;
     width: 400px;
     max-width: 90%;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     animation: fadeIn 0.2s ease-in-out;
 }
 

@@ -1,6 +1,6 @@
-﻿namespace Application.DTO;
+namespace Application.DTO;
 
-public class UpdateEventDto
+public class EventDto
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
@@ -10,4 +10,7 @@ public class UpdateEventDto
     public string Category { get; set; } = string.Empty;
     public int MaxParticipants { get; set; }
     public string? ImageUrl { get; set; }
+
+    // Participants in the event
+    public List<EventParticipantDto> Participants { get; set; } = new List<EventParticipantDto>();
 }

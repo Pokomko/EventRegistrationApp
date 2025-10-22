@@ -23,7 +23,10 @@ public class EventRepository : IEventRepository
     {
         try
         {
-            var events = await _context.Events.ToListAsync();
+            var events = await _context.Events
+                .Include(e => e.ParticipantEvents)
+                .ThenInclude(pe => pe.Participant)
+                .ToListAsync();
             return events;
         }
         catch (Exception ex)
@@ -32,15 +35,12 @@ public class EventRepository : IEventRepository
         }
     }
 
-    public async Task<Event> GetEventByIdAsync(Guid eventId)
+    public async Task<Event?> GetEventByIdAsync(Guid eventId)
     {
-        try
-        {
-            return await _context.Events.FirstOrDefaultAsync(e => e.Id == eventId);
-        }
-        catch (Exception ex) {
-            throw;
-        }
+        return await _context.Events
+               .Include(e => e.ParticipantEvents)
+               .ThenInclude(pe => pe.Participant)
+               .FirstOrDefaultAsync(e => e.Id == eventId);
     }
     public async Task CreateEventAsync(Event newEvent)
     {
@@ -55,17 +55,13 @@ public class EventRepository : IEventRepository
         }
     }
 
-    public async Task<bool> DeleteEventAsync(Guid eventId)
+    public async Task<bool> DeleteEventAsync(Event eventToDelete)
     {
         try
         {
-            var eventToDelete = await _context.Events.FirstOrDefaultAsync(e => e.Id == eventId);
-            if (eventToDelete != null) { 
-                _context.Events.Remove(eventToDelete);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            return false;
+            _context.Events.Remove(eventToDelete);
+            await _context.SaveChangesAsync();
+            return true;
         }
         catch (Exception ex) 
         {
@@ -73,26 +69,10 @@ public class EventRepository : IEventRepository
         }
     }
 
-    public async Task EditEventAsync(UpdateEventDto updatedEvent)
+    public async Task EditEventAsync(Event updatedEvent)
     {
         try {
-            var existingEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == updatedEvent.Id);
-
-            if (existingEvent == null)
-            {
-                throw new KeyNotFoundException($"Event with Id {updatedEvent.Id} not found.");
-            }
-
-            existingEvent.Title = updatedEvent.Title;
-            existingEvent.Description = updatedEvent.Description;
-            existingEvent.StartDateTime = updatedEvent.StartDateTime;
-            existingEvent.Location = updatedEvent.Location;
-            existingEvent.Category = updatedEvent.Category;
-            existingEvent.MaxParticipants = updatedEvent.MaxParticipants;
-
-            // check existingEvent.MaxParticipants > updatedEvent.MaxParticipants; !!!
-
-            _context.Events.Update(existingEvent);
+            _context.Events.Update(updatedEvent);
             await _context.SaveChangesAsync();
         }
         catch (Exception ex) {

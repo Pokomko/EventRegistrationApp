@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Application.DTO;
+using System.Linq;
 
 namespace Web.Controllers;
 
@@ -18,32 +19,33 @@ public class EventsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Event>>> GetAll()
+    public async Task<ActionResult<IEnumerable<EventDto>>> GetAll()
     {
-        var eventList = await _eventService.GetAllEventsAsync();
-        return Ok(eventList);
+        var dtoList = await _eventService.GetAllEventsAsync();
+        return Ok(dtoList);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<IEnumerable<Event>>> GetById(Guid id)
+    public async Task<ActionResult<EventDto>> GetById(Guid id)
     {
         var eventItem = await _eventService.GetEventByIdAsync(id);
+        if (eventItem == null) return NotFound();
         return Ok(eventItem);
     }
 
     [HttpPost]
     [Authorize(Policy = "AdminPolicy")]
-    public async Task<IActionResult> Create(Event newEvent)
+    public async Task<IActionResult> Create(CreateEventDto newEventDto)
     {
-        await _eventService.CreateEventAsync(newEvent);
-        return CreatedAtAction(nameof(GetAll), new { id = newEvent.Id }, newEvent);
+        await _eventService.CreateEventAsync(newEventDto);
+        return Ok();
     }
 
     [HttpPut]
     [Authorize(Policy = "AdminPolicy")]
-    public async Task<IActionResult> Update(UpdateEventDto updatedEvent)
+    public async Task<IActionResult> Update(UpdateEventDto updatedEventDto)
     {
-        await _eventService.EditEventAsync(updatedEvent);
+        await _eventService.EditEventAsync(updatedEventDto);
         return Ok();
     }
 

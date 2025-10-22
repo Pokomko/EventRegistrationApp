@@ -8,14 +8,13 @@ using Microsoft.Extensions.Logging;
 public class UserRepository : IUserRepository
 {
     private readonly AppDbContext _context;
-    private readonly ILogger<UserRepository> _logger; // Логгер для репозитория
+    private readonly ILogger<UserRepository> _logger;
 
     public UserRepository(AppDbContext context, ILogger<UserRepository> logger)
     {
         _context = context;
         _logger = logger;
     }
-
 
     public async Task AddAsync(User user)
     {
@@ -24,11 +23,19 @@ public class UserRepository : IUserRepository
             _logger.LogInformation("Начинаем добавление пользователя: {Username}", user.Username);
 
             // Поиск роли пользователя
-            var role = await _context.Role
+            var role = await _context.Roles
                 .SingleOrDefaultAsync(r => r.Id == (int)RolesEnum.User)
                 ?? throw new InvalidOperationException("Роль не найдена");
 
             user.Roles.Add(role);
+            user.Participant = new Participant
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Test1",
+                LastName = "Test2",
+                BirthDate = new DateTime(1995, 7, 23),
+                User = user
+            };
 
             // Добавление пользователя
             await _context.Users.AddAsync(user);
