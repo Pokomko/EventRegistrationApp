@@ -1,5 +1,5 @@
-using Application.Interfaces;
 using Application.DTO;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -40,8 +40,14 @@ public class UserModelIndex: PageModel
         _eventService = eventService;
     }
 
-    public async Task OnGetAsync()
+    public async Task<IActionResult> OnGetAsync()
     {
+        if (User.Identity?.IsAuthenticated != true)
+        {
+            return RedirectToPage("/NotAuthorized");
+        }
+
         Events = await _eventService.GetAllEventsAsync();
+        return Page();
     }
 }

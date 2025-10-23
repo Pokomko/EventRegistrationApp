@@ -37,9 +37,17 @@ public static class ApiExtensions
                         context.Token = token;
 
                         return Task.CompletedTask;
+                    },
+                    OnChallenge = context => {
+                        context.HandleResponse();
+
+                        context.Response.Redirect("/NotAuthorized");
+
+                        return Task.CompletedTask;
                     }
                 };
             });
+        
 
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();

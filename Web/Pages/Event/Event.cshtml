@@ -1,0 +1,177 @@
+@page "/Event/{id:guid}"
+@model Web.Pages.Event.EventModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = Model.Event?.Title ?? "Событие";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/events.css" />
+}
+
+<div class="event-detail-container">
+    <div class="event-header">
+        <a href="/User/Events" class="back-button">← Назад к списку событий</a>
+        <a href="/Logout" class="logout-button">Выйти</a>
+    </div>
+
+    @if (Model.Event != null)
+    {
+        <div class="event-card">
+            <div class="event-image">
+                @if (!string.IsNullOrEmpty(Model.Event.ImageUrl))
+                {
+                    <img src="@Model.Event.ImageUrl" alt="@Model.Event.Title" />
+                }
+                else
+                {
+                    <div class="no-image">Нет изображения</div>
+                }
+            </div>
+
+            <div class="event-content">
+                <h1 class="event-title">@Model.Event.Title</h1>
+                
+                <div class="event-meta">
+                    <div class="meta-item">
+                        <strong>📅 Дата и время:</strong>
+                        <span>@Model.Event.StartDateTime.ToString("dd.MM.yyyy HH:mm")</span>
+                    </div>
+                    
+                    <div class="meta-item">
+                        <strong>📍 Место:</strong>
+                        <span>@Model.Event.Location</span>
+                    </div>
+                    
+                    <div class="meta-item">
+                        <strong>🏷️ Категория:</strong>
+                        <span>@Model.Event.Category</span>
+                    </div>
+                    
+                    <div class="meta-item">
+                        <strong>👥 Участники:</strong>
+                        <span>@Model.Event.Participants.Count / @Model.Event.MaxParticipants</span>
+                    </div>
+                </div>
+
+                <div class="event-description">
+                    <h3>Описание</h3>
+                    <p>@Model.Event.Description</p>
+                </div>
+
+                <div class="event-actions">
+                    @if (Model.IsRegistered)
+                    {
+                        <button class="btn btn-registered" disabled>
+                            ✅ Вы зарегистрированы
+                        </button>
+                    }
+                    else if (Model.Event.Participants.Count < Model.Event.MaxParticipants)
+                    {
+                        <button class="btn btn-register" onclick="registerForEvent('@Model.Event.Id')">
+                            Зарегистрироваться
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-full" disabled>
+                            ❌ Мест нет
+                        </button>
+                    }
+
+                    @if (Model.IsAdmin)
+                    {
+                        <button class="btn btn-edit" onclick="editEvent('@Model.Event.Id')">
+                            Редактировать
+                        </button>
+                        <button class="btn btn-delete" onclick="deleteEvent('@Model.Event.Id')">
+                            Удалить
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="participants-section">
+            <h3>Участники (@Model.Event.Participants.Count)</h3>
+            @if (Model.Event.Participants.Any())
+            {
+                <div class="participants-list">
+                    @foreach (var participant in Model.Event.Participants)
+                    {
+                        <div class="participant-item">
+                            <div class="participant-info">
+                                <span class="participant-name">
+                                    @participant.Participant.FirstName @participant.Participant.LastName
+                                </span>
+                                <span class="participant-date">
+                                    Зарегистрирован: @participant.RegisteredAt.ToString("dd.MM.yyyy HH:mm")
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="no-participants">Пока никто не зарегистрирован</p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="error-message">
+            <h2>Событие не найдено</h2>
+            <p>Запрашиваемое событие не существует или было удалено.</p>
+            <a href="/User/Events" class="btn btn-primary">Вернуться к списку событий</a>
+        </div>
+    }
+</div>
+
+<script>
+    async function registerForEvent(eventId) {
+        try {
+            const response = await fetch('/api/EventRegistration', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ eventId: eventId })
+            });
+
+            if (response.ok) {
+                alert('Вы успешно зарегистрированы на событие!');
+                location.reload();
+            } else {
+                const error = await response.text();
+                alert('Ошибка при регистрации: ' + error);
+            }
+        } catch (error) {
+            alert('Ошибка при регистрации: ' + error.message);
+        }
+    }
+
+    function editEvent(eventId) {
+        // Перенаправляем на страницу редактирования или открываем модальное окно
+        window.location.href = `/Admin/Events?edit=${eventId}`;
+    }
+
+    async function deleteEvent(eventId) {
+        if (confirm('Вы уверены, что хотите удалить это событие?')) {
+            try {
+                const response = await fetch(`/api/Events/${eventId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('Событие удалено!');
+                    window.location.href = '/User/Events';
+                } else {
+                    alert('Ошибка при удалении события');
+                }
+            } catch (error) {
+                alert('Ошибка при удалении: ' + error.message);
+            }
+        }
+    }
+</script>

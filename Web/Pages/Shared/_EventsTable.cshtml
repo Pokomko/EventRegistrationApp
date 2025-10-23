@@ -19,7 +19,9 @@
     @foreach (var eventItem in Model)
     {
         <div class="table__row">
-            <div class="table__cell table__cell--2">@eventItem.Title</div>
+            <div class="table__cell table__cell--2">
+                <a href="/Event/@eventItem.Id" class="event-title-link">@eventItem.Title</a>
+            </div>
             <div class="table__cell table__cell--3">@eventItem.Description</div>
             <div class="table__cell table__cell--1">@eventItem.StartDateTime.ToString("g")</div>
             <div class="table__cell table__cell--2">@eventItem.Location</div>

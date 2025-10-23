@@ -22,8 +22,14 @@ public class LoginModel : PageModel
     public string Password { get; set; } = string.Empty;
 
     public string ErrorMessage { get; set; } = string.Empty;
-    public void OnGet() {
+    public IActionResult OnGet() {
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            return Redirect("/User/Events");
+        }
+
         ViewData["Title"] = "Login";
+        return Page();
     }
 
 /*    public async Task<IActionResult> OnPostAsync()

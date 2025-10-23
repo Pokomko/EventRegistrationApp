@@ -45,6 +45,7 @@ public class Program
         builder.Services.AddScoped<IEventService, EventService>();
         builder.Services.AddScoped<ICookieService, CookieService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IFileService, FileService>();
         builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
         builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 

@@ -13,9 +13,11 @@ namespace Web.Controllers;
 public class EventsController : ControllerBase
 {
     private readonly IEventService _eventService;
-    public EventsController(IEventService eventService)
+    private readonly IFileService _fileService;
+    public EventsController(IEventService eventService, IFileService fileService)
     {
         _eventService = eventService;
+        _fileService = fileService;
     }
 
     [HttpGet]
@@ -35,16 +37,26 @@ public class EventsController : ControllerBase
 
     [HttpPost]
     [Authorize(Policy = "AdminPolicy")]
-    public async Task<IActionResult> Create(CreateEventDto newEventDto)
+    public async Task<IActionResult> Create([FromForm] CreateEventDto newEventDto)
     {
+        if (newEventDto.Image != null)
+        {
+            newEventDto.ImageUrl = await _fileService.SaveEventImageAsync(newEventDto.Image!);
+        }
+
         await _eventService.CreateEventAsync(newEventDto);
         return Ok();
     }
 
     [HttpPut]
     [Authorize(Policy = "AdminPolicy")]
-    public async Task<IActionResult> Update(UpdateEventDto updatedEventDto)
+    public async Task<IActionResult> Update([FromForm] UpdateEventDto updatedEventDto)
     {
+        if (updatedEventDto.Image != null)
+        {
+            updatedEventDto.ImageUrl = await _fileService.SaveEventImageAsync(updatedEventDto.Image!);
+        }
+
         await _eventService.EditEventAsync(updatedEventDto);
         return Ok();
     }

@@ -30,9 +30,15 @@ namespace Web.Pages
 
         public string ErrorMessage { get; set; } = string.Empty;
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return Redirect("/User/Events");
+            }
+
             ViewData["Title"] = "Registration";
+            return Page();
         }
 
 /*        public async Task<IActionResult> OnPostAsync()

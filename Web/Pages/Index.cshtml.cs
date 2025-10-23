@@ -5,8 +5,13 @@ namespace Web.Pages
 {
     public class IndexModel : PageModel
     {
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            if (User.Identity?.IsAuthenticated == true) {
+                return Redirect("/User/Events");
+            }
+
+            return Page();
         }
     }
 }

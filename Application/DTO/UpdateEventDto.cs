@@ -1,4 +1,6 @@
-﻿namespace Application.DTO;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Application.DTO;
 
 public class UpdateEventDto
 {
@@ -9,5 +11,6 @@ public class UpdateEventDto
     public string Location { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
     public int MaxParticipants { get; set; }
+    public IFormFile? Image { get; set; }
     public string? ImageUrl { get; set; }
 }
