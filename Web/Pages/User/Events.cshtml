@@ -20,19 +20,42 @@
     </div>
 }
 
+<div class="container">
+    <form method="get" class="search-form">
+        <input type="text" name="QueryString" value="@Model.QueryString" placeholder="Поиск мероприятий..." />
+
+        <input type="date"
+               name="StartDate"
+               value="@(Model.StartDate?.ToString("yyyy-MM-dd") ?? "")"
+               class="search__input search__input--date" />
+
+        <input type="date"
+               name="EndDate"
+               value="@(Model.EndDate?.ToString("yyyy-MM-dd") ?? "")"
+               class="search__input search__input--date" />
+
+        <button type="submit">Найти</button>
+
+        @if (!string.IsNullOrEmpty(Model.QueryString))
+        {
+            <a href="?page=1" class="reset-button">X</a>
+        }
+    </form>
+</div>
+
 @await Html.PartialAsync("_EventsTable", Model.Events)
 
 <div class="pagination">
     @if (Model.CurrentPage > 1)
     {
-        <a href="?pageNumber=@(Model.CurrentPage - 1)">Назад</a>
+        <a href="?pageNumber=@(Model.CurrentPage - 1)&QueryString=@Model.QueryString&StartDate=@Model.StartDate&EndDate=@Model.EndDate">Назад</a>
     }
 
     <span>Страница @Model.CurrentPage из @Model.TotalPages</span>
 
     @if (Model.CurrentPage < Model.TotalPages)
     {
-        <a href="?pageNumber=@(Model.CurrentPage + 1)">Вперед</a>
+        <a href="?pageNumber=@(Model.CurrentPage + 1)&QueryString=@Model.QueryString&StartDate=@Model.StartDate&EndDate=@Model.EndDate">Вперед</a>
     }
 </div>
 

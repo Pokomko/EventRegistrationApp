@@ -56,28 +56,40 @@ public class EventRepository : IEventRepository
             throw;
         }
     }
-    public async Task<(List<Event>, int TotalCount)> GetPagedEventsAsync(int page, int pageSize)
+    public async Task<(List<Event>, int TotalCount)> GetPagedEventsAsync(int page, int pageSize, string? queryString = null, DateTime? startDate = null, DateTime? endDate = null)
     {
-        try
+        var query = _context.Events
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(queryString))
         {
-            var query = _context.Events;
-
-            var totalCount = query.Count();
-
-            var events = await query
-                .Include(e => e.ParticipantEvents)
-                .ThenInclude(pe => pe.Participant)
-                .OrderBy(e => e.StartDateTime)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            return (events, totalCount);
+            query = query.Where(e =>
+            e.Title.Contains(queryString) ||
+            e.Description.Contains(queryString) ||
+            e.Category.Contains(queryString)
+            );
         }
-        catch (Exception ex)
+
+        if (startDate.HasValue) {
+            query = query.Where(e => e.StartDateTime >= startDate.Value.Date);
+        }
+
+        if (endDate.HasValue)
         {
-            throw;
+            query = query.Where(e => e.StartDateTime <= endDate.Value.Date);
         }
+
+        var totalCount = query.Count();
+
+        var events = await query
+            .Include(e => e.ParticipantEvents)
+            .ThenInclude(pe => pe.Participant)
+            .OrderBy(e => e.StartDateTime)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (events, totalCount);
     }
 
     public async Task<bool> DeleteEventAsync(Event eventToDelete)

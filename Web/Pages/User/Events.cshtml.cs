@@ -14,7 +14,9 @@ public class UserModelIndex: PageModel
     public int CurrentPage { get; set; } = 1;
     public int PageSize { get; set; } = 5;
     public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
-    public string UserName { get; set; } = string.Empty;
+    public string? QueryString { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
     public bool IsAdmin => User.IsInRole("Admin");
 
     [BindProperty]
@@ -35,16 +37,15 @@ public class UserModelIndex: PageModel
     [BindProperty]
     public int EventMaxParticipants { get; set; }
 
-    private readonly IUserService _userService;
+
     private readonly IEventService _eventService;
 
-    public UserModelIndex(IUserService userService, IEventService eventService)
+    public UserModelIndex(IEventService eventService)
     {
-        _userService = userService;
         _eventService = eventService;
     }
 
-    public async Task<IActionResult> OnGetAsync(int pageNumber = 1)
+    public async Task<IActionResult> OnGetAsync(int pageNumber = 1, string? queryString = null, DateTime? startDate = null, DateTime? endDate = null)
     {
 
         if (User.Identity?.IsAuthenticated != true)
@@ -53,7 +54,11 @@ public class UserModelIndex: PageModel
         }
         
         CurrentPage = pageNumber;
-        (Events, TotalCount) = await _eventService.GetPagedEventsAsync(pageNumber, PageSize);
+        QueryString = queryString;
+        StartDate = startDate;
+        EndDate = endDate;
+        
+        (Events, TotalCount) = await _eventService.GetPagedEventsAsync(CurrentPage, PageSize, QueryString, StartDate ?? DateTime.Now, EndDate);
         return Page();
     }
 }

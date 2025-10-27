@@ -74,9 +74,9 @@ public class EventService : IEventService
             }).ToList() ?? new List<EventParticipantDto>()
         };
     }
-    public async Task<(List<EventDto>, int totalCount)> GetPagedEventsAsync(int page, int pageSize)
+    public async Task<(List<EventDto>, int totalCount)> GetPagedEventsAsync(int page, int pageSize, string? queryString = null, DateTime? startDate = null, DateTime? endDate = null)
     {
-        var (pagedEvents, totalCount) = await _eventRepository.GetPagedEventsAsync(page, pageSize);
+        var (pagedEvents, totalCount) = await _eventRepository.GetPagedEventsAsync(page, pageSize, queryString, startDate, endDate);
 
         var eventDtos = pagedEvents.Select(e => new EventDto
         {
