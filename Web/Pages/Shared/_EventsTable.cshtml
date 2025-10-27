@@ -39,7 +39,7 @@
             } else {
                 <div class="table__cell table__cell--1">
                     <div class="table__btn-wrapper">
-                        <button class="btn btn-info" onclick="registerParticipantForEvent('@eventItem.Id')">Записаться</button>
+                        <button class="btn btn-info" onclick="registerForEvent('@eventItem.Id')">Записаться</button>
                     </div>
                 </div>
             }
@@ -67,21 +67,25 @@
         }
     }
     
-    async function registerParticipantForEvent(eventId) {
-        const url = `/api/EventRegistration/${eventId}`;
+    async function registerForEvent(eventId) {
+        try {
+            const response = await fetch(`/api/EventRegistration`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ eventId: eventId })
+            });
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (response.ok) {
-            alert('Успешная запись');
-            location.reload();
-        } else {
-            alert('Ошибка при записи на событие!');
+            if (response.ok) {
+                alert('Вы успешно зарегистрированы на событие!');
+                location.reload();
+            } else {
+                const error = await response.text();
+                alert('Ошибка при регистрации: ' + error);
+            }
+        } catch (error) {
+            alert('Ошибка при регистрации: ' + error.message);
         }
     }
 </script>

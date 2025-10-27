@@ -10,6 +10,10 @@ namespace Web.Pages.User;
 public class UserModelIndex: PageModel
 {
     public List<EventDto> Events { get; set; } = new List<EventDto>();
+    public int TotalCount { get; set; }
+    public int CurrentPage { get; set; } = 1;
+    public int PageSize { get; set; } = 5;
+    public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
     public string UserName { get; set; } = string.Empty;
     public bool IsAdmin => User.IsInRole("Admin");
 
@@ -40,14 +44,16 @@ public class UserModelIndex: PageModel
         _eventService = eventService;
     }
 
-    public async Task<IActionResult> OnGetAsync()
+    public async Task<IActionResult> OnGetAsync(int pageNumber = 1)
     {
+
         if (User.Identity?.IsAuthenticated != true)
         {
             return RedirectToPage("/NotAuthorized");
         }
-
-        Events = await _eventService.GetAllEventsAsync();
+        
+        CurrentPage = pageNumber;
+        (Events, TotalCount) = await _eventService.GetPagedEventsAsync(pageNumber, PageSize);
         return Page();
     }
 }

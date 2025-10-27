@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Application.DTO;
 using Domain.Entities;
 using Infrastructure.Context;
 using Microsoft.AspNetCore.Authorization;
@@ -21,8 +22,8 @@ public class EventRegistrationController : ControllerBase
     }
 
     // POST api/EventRegistration/{eventId}
-    [HttpPost("{eventId}")]
-    public async Task<IActionResult> Register(Guid eventId)
+    [HttpPost]
+    public async Task<IActionResult> Register([FromBody] SubscribeToEventDto eventDto)
     {
         var userIdClaim = User.FindFirst("userId")?.Value;
         if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
@@ -32,7 +33,7 @@ public class EventRegistrationController : ControllerBase
 
         var evt = await _context.Events
             .Include(e => e.ParticipantEvents)
-            .FirstOrDefaultAsync(e => e.Id == eventId);
+            .FirstOrDefaultAsync(e => e.Id == eventDto.eventId);
 
         if (evt == null)
         {
@@ -77,5 +78,44 @@ public class EventRegistrationController : ControllerBase
         await _context.SaveChangesAsync();
 
         return Ok();
+    }
+
+    [HttpDelete("{eventId}")]
+    public async Task<IActionResult> UnRegister(Guid eventId)
+    {
+        var userIdClaim = User.FindFirst("userId")?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var evt = await _context.Events
+            .Include(e => e.ParticipantEvents)
+            .FirstOrDefaultAsync(e => e.Id == eventId);
+
+        if (evt == null)
+        {
+            return NotFound("Event not found");
+        }
+
+        // Ensure participant exists
+        var participant = await _context.Participants
+            .Include(p => p.ParticipantEvents)
+            .FirstOrDefaultAsync(p => p.UserId == userId || p.Id == userId);
+
+        if (participant == null)
+        {
+            throw new InvalidOperationException("Participant not found");
+        }
+
+        // Check registered
+        var existing = await _context.ParticipantEvents.FindAsync(participant.Id, evt.Id);
+        if (existing != null)
+        {
+            _context.ParticipantEvents.Remove(existing);
+            await _context.SaveChangesAsync();
+        }
+
+        return NoContent();
     }
 }

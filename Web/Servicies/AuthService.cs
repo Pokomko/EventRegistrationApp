@@ -28,6 +28,6 @@ public class AuthService : IAuthService
 
     public async Task RegisterAsync(RegisterDto dto)
     {
-        await _userService.RegisterAsync(dto.Username, dto.Password, dto.Email);
+        await _userService.RegisterAsync(dto.Firstname, dto.Password, dto.Email);
     }
 }

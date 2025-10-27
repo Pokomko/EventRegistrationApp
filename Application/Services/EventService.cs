@@ -1,6 +1,7 @@
-﻿using Application.Interfaces;
-using Application.DTO;
+﻿using Application.DTO;
+using Application.Interfaces;
 using Domain.Entities;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 
 namespace Application.Services;
@@ -73,7 +74,37 @@ public class EventService : IEventService
             }).ToList() ?? new List<EventParticipantDto>()
         };
     }
+    public async Task<(List<EventDto>, int totalCount)> GetPagedEventsAsync(int page, int pageSize)
+    {
+        var (pagedEvents, totalCount) = await _eventRepository.GetPagedEventsAsync(page, pageSize);
 
+        var eventDtos = pagedEvents.Select(e => new EventDto
+        {
+            Id = e.Id,
+            Title = e.Title,
+            Description = e.Description,
+            StartDateTime = e.StartDateTime,
+            Location = e.Location,
+            Category = e.Category,
+            MaxParticipants = e.MaxParticipants,
+            ImageUrl = e.ImageUrl,
+            Participants = e.ParticipantEvents?.Select(pe => new EventParticipantDto
+            {
+                EventId = pe.EventId,
+                Participant = new ParticipantDto
+                {
+                    ParticipantId = pe.Participant.Id,
+                    FirstName = pe.Participant.FirstName,
+                    LastName = pe.Participant.LastName,
+                    BirthDate = pe.Participant.BirthDate
+                },
+                UserId = pe.Participant.UserId,
+                RegisteredAt = pe.RegisteredAt
+            }).ToList() ?? new List<EventParticipantDto>()
+        }).ToList();
+
+        return (eventDtos, totalCount);
+    }
     public async Task CreateEventAsync(CreateEventDto newEventDto)
     {
         var newEvent = new Event
@@ -123,4 +154,5 @@ public class EventService : IEventService
 
         return false;
     }
+
 }
