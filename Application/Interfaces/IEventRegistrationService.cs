@@ -1,7 +1,8 @@
-﻿namespace Application.Interfaces
+namespace Application.Interfaces;
+
+public interface IEventRegistrationService
 {
-    public interface IEventRegistrationService
-    {
-        Task RegisterAsync(Guid userId, Guid eventId);
-    }
+    Task RegisterAsync(Guid userId, Guid eventId);
+    Task UnregisterAsync(Guid userId, Guid eventId);
 }
+

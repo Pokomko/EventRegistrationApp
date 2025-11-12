@@ -1,0 +1,16 @@
+using Microsoft.AspNetCore.Http;
+
+namespace Application.DTO;
+
+public abstract class EventBaseDto
+{
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public DateTime StartDateTime { get; set; }
+    public string Location { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public int MaxParticipants { get; set; }
+    public IFormFile? Image { get; set; }
+    public string? ImageUrl { get; set; }
+}
+

@@ -39,7 +39,14 @@
             } else {
                 <div class="table__cell table__cell--1">
                     <div class="table__btn-wrapper">
-                        <button class="btn btn-info" onclick="registerForEvent('@eventItem.Id')">Записаться</button>
+                        @if (eventItem.StartDateTime > DateTime.Now)
+                        {
+                            <button class="btn btn-info" onclick="registerForEvent('@eventItem.Id')">Записаться</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary" disabled>Событие прошло</button>
+                        }
                     </div>
                 </div>
             }

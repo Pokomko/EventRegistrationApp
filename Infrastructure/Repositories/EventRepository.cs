@@ -100,8 +100,7 @@ public class EventRepository : IEventRepository
             await _context.SaveChangesAsync();
             return true;
         }
-        catch (Exception ex) 
-        {
+        catch {
             throw;
         }
     }
@@ -112,9 +111,8 @@ public class EventRepository : IEventRepository
             _context.Events.Update(updatedEvent);
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex) {
+        catch {
             throw;
         }
-
     }
 }

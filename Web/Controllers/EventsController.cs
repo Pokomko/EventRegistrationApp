@@ -27,12 +27,12 @@ public class EventsController : ControllerBase
         return Ok(dtoList);
     }
 
-    //[HttpGet]
-    //public async Task<ActionResult<IEnumerable<EventDto>>> GetPagedEvents(int page = 1, int pageSize = 1)
-    //{
-    //    var dtoList = await _eventService.GetPagedEventsAsync(page, pageSize);
-    //    return Ok(dtoList);
-    //}
+    [HttpGet("paged")]
+    public async Task<ActionResult<IEnumerable<EventDto>>> GetPagedEvents(int currentPage = 1, int pageSize = 1, string? q = null, DateTime? startDate = null, DateTime? endDate = null)
+    {
+        var (dtoList, count) = await _eventService.GetPagedEventsAsync(currentPage, pageSize, q, startDate, endDate);
+        return Ok(dtoList);
+    }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<EventDto>> GetById(Guid id)

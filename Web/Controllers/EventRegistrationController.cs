@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Application.DTO;
+using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Context;
 using Microsoft.AspNetCore.Authorization;
@@ -14,11 +15,11 @@ namespace Web.Controllers;
 [Authorize]
 public class EventRegistrationController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IEventRegistrationService _eventRegistrationService;
 
-    public EventRegistrationController(AppDbContext context)
+    public EventRegistrationController(IEventRegistrationService eventRegistrationService)
     {
-        _context = context;
+        _eventRegistrationService = eventRegistrationService;
     }
 
     // POST api/EventRegistration/{eventId}
@@ -31,52 +32,7 @@ public class EventRegistrationController : ControllerBase
             return Unauthorized();
         }
 
-        var evt = await _context.Events
-            .Include(e => e.ParticipantEvents)
-            .FirstOrDefaultAsync(e => e.Id == eventDto.eventId);
-
-        if (evt == null)
-        {
-            return NotFound("Event not found");
-        }
-
-        // Ensure participant exists
-        var participant = await _context.Participants
-            .Include(p => p.ParticipantEvents)
-            .FirstOrDefaultAsync(p => p.UserId == userId || p.Id == userId);
-
-        if (participant == null)
-        {
-            throw new InvalidOperationException("Participant not found");
-        }
-
-        // Check already registered
-        var existing = await _context.ParticipantEvents.FindAsync(participant.Id, evt.Id);
-        if (existing != null)
-        {
-            return Conflict("User already registered for this event");
-        }
-
-        // Check capacity
-        var currentCount = await _context.ParticipantEvents.CountAsync(pe => pe.EventId == evt.Id);
-        if (currentCount >= evt.MaxParticipants)
-        {
-            return BadRequest("Event is full");
-        }
-
-        var participantEvent = new ParticipantEvent
-        {
-            ParticipantId = participant.Id,
-            EventId = evt.Id,
-            RegisteredAt = DateTime.UtcNow,
-            Participant = participant,
-            Event = evt
-        };
-
-        _context.ParticipantEvents.Add(participantEvent);
-
-        await _context.SaveChangesAsync();
-
+        await _eventRegistrationService.RegisterAsync(userId, eventDto.eventId);
         return Ok();
     }
 
@@ -89,32 +45,7 @@ public class EventRegistrationController : ControllerBase
             return Unauthorized();
         }
 
-        var evt = await _context.Events
-            .Include(e => e.ParticipantEvents)
-            .FirstOrDefaultAsync(e => e.Id == eventId);
-
-        if (evt == null)
-        {
-            return NotFound("Event not found");
-        }
-
-        // Ensure participant exists
-        var participant = await _context.Participants
-            .Include(p => p.ParticipantEvents)
-            .FirstOrDefaultAsync(p => p.UserId == userId || p.Id == userId);
-
-        if (participant == null)
-        {
-            throw new InvalidOperationException("Participant not found");
-        }
-
-        // Check registered
-        var existing = await _context.ParticipantEvents.FindAsync(participant.Id, evt.Id);
-        if (existing != null)
-        {
-            _context.ParticipantEvents.Remove(existing);
-            await _context.SaveChangesAsync();
-        }
+        await _eventRegistrationService.UnregisterAsync(userId, eventId);
 
         return NoContent();
     }

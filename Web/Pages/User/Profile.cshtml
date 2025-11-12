@@ -1,0 +1,170 @@
+﻿@page
+@model Web.Pages.User.ProfileModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Личный кабинет";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/events.css" />
+}
+
+<div class="profile-container">
+    <div class="profile-cabinet">
+        <aside class="profile-cabinet__sidebar">
+            <div class="profile-cabinet__header">
+                <h2>Личный кабинет</h2>
+            </div>
+            <nav class="profile-cabinet__nav">
+                <button class="profile-cabinet__nav-item active" data-tab="events">
+                    <span>Мои мероприятия</span>
+                </button>
+                <button class="profile-cabinet__nav-item" data-tab="profile">
+                    <span>Редактирование профиля</span>
+                </button>
+                <a href="/Logout" class="event-header profile-cabinet__nav-item">
+                    <span>Выйти</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="profile-cabinet__content">
+            @if (!string.IsNullOrEmpty(TempData["SuccessMessage"] as string))
+            {
+                <div class="profile__message profile__message--success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+            {
+                <div class="profile__message profile__message--error">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            <!-- Таб: Мои мероприятия -->
+            <div class="profile-cabinet__tab" id="tab-events">
+                <div class="profile-cabinet__tab-header">
+                    <h3>Мои мероприятия</h3>
+                    <p>Список мероприятий, на которые вы зарегистрированы</p>
+                </div>
+                <div class="profile-cabinet__tab-content">
+                    <div class="profile__empty">
+                        <p>Функционал в разработке. Здесь будет отображаться список мероприятий, на которые вы зарегистрированы.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Таб: Редактирование профиля -->
+            <div class="profile-cabinet__tab" id="tab-profile" style="display: none;">
+                <div class="profile-cabinet__tab-header">
+                    <h3>Редактирование профиля</h3>
+                    <p>Управление персональными данными</p>
+                </div>
+                <div class="profile-cabinet__tab-content">
+                    @if (Model.ParticipantInfo != null)
+                    {
+                        <form method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden"
+                                   id="ParticipantInfo_Id"
+                                   name="ParticipantInfo.Id"
+                                   value="@Model.ParticipantInfo.Id" />
+
+                            <div class="profile__info">
+                                <div class="profile__field">
+                                    <label for="ParticipantInfo_FirstName">Имя *</label>
+                                    <input type="text"
+                                           id="ParticipantInfo_FirstName"
+                                           name="ParticipantInfo.FirstName"
+                                           value="@Model.ParticipantInfo.FirstName"
+                                           required />
+                                    <span class="text-danger">@Html.ValidationMessage("ParticipantInfo.FirstName")</span>
+                                </div>
+
+                                <div class="profile__field">
+                                    <label for="ParticipantInfo_LastName">Фамилия *</label>
+                                    <input type="text"
+                                           id="ParticipantInfo_LastName"
+                                           name="ParticipantInfo.LastName"
+                                           value="@Model.ParticipantInfo.LastName"
+                                           required />
+                                    <span class="text-danger">@Html.ValidationMessage("ParticipantInfo.LastName")</span>
+                                </div>
+
+                                <div class="profile__field">
+                                    <label for="ParticipantInfo_BirthDate">Дата рождения *</label>
+                                    <input type="date"
+                                           id="ParticipantInfo_BirthDate"
+                                           name="ParticipantInfo.BirthDate"
+                                           value="@(Model.ParticipantInfo.BirthDate.ToString("yyyy-MM-dd"))"
+                                           required
+                                           max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                    <span class="text-danger">@Html.ValidationMessage("ParticipantInfo.BirthDate")</span>
+                                </div>
+
+                                <div class="profile__actions">
+                                    <button type="submit" class="profile__btn profile__btn--save">Сохранить</button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="profile__empty">
+                            <p>Профиль участника не найден. Пожалуйста, обратитесь к администратору.</p>
+                            <a href="/User/Events" class="profile__btn profile__btn--info">
+                                Вернуться к событиям
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const navItems = document.querySelectorAll('.profile-cabinet__nav-item');
+        const tabs = document.querySelectorAll('.profile-cabinet__tab');
+
+        function switchTab(tabName) {
+            // Убираем активный класс у всех элементов навигации
+            navItems.forEach(nav => nav.classList.remove('active'));
+
+            // Добавляем активный класс текущему элементу
+            const activeNavItem = document.querySelector(`[data-tab="${tabName}"]`);
+            if (activeNavItem) {
+                activeNavItem.classList.add('active');
+            }
+
+            // Скрываем все табы
+            tabs.forEach(tab => {
+                tab.style.display = 'none';
+            });
+
+            // Показываем выбранный таб
+            const selectedTab = document.getElementById(`tab-${tabName}`);
+            if (selectedTab) {
+                selectedTab.style.display = 'block';
+            }
+        }
+
+        // Если есть сообщения (после POST-запроса), открываем таб профиля
+        const successMessage = document.querySelector('.profile__message--success');
+        const errorMessage = document.querySelector('.profile__message--error');
+        if (successMessage || errorMessage) {
+            switchTab('profile');
+        }
+
+        // Обработчики для элементов навигации
+        navItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                switchTab(tabName);
+            });
+        });
+    });
+</script>

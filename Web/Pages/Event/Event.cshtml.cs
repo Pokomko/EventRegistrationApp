@@ -33,11 +33,11 @@ public class EventModel : PageModel
         }
 
         // Проверяем, зарегистрирован ли пользователь на это событие
-        var userId = User.FindFirst("UserId")?.Value;
+        var userId = User.FindFirst("userId")?.Value;
         if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var userGuid))
         {
             IsRegistered = Event.Participants.Any(p => p.UserId == userGuid);
-        }
+        }   
 
         return Page();
     }

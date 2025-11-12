@@ -15,6 +15,8 @@ public static class DependencyInjection
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
         builder.Services.AddScoped<IEventRepository, EventRepository>();
+        builder.Services.AddScoped<IEventRegistrationRepository, EventRegistrationRepository>();
     }
 }

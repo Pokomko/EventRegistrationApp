@@ -14,7 +14,7 @@ public class UserModelIndex: PageModel
     public int CurrentPage { get; set; } = 1;
     public int PageSize { get; set; } = 5;
     public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
-    public string? QueryString { get; set; }
+    public string? Q { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public bool IsAdmin => User.IsInRole("Admin");
@@ -39,26 +39,24 @@ public class UserModelIndex: PageModel
 
 
     private readonly IEventService _eventService;
-
     public UserModelIndex(IEventService eventService)
     {
         _eventService = eventService;
     }
 
-    public async Task<IActionResult> OnGetAsync(int pageNumber = 1, string? queryString = null, DateTime? startDate = null, DateTime? endDate = null)
+    public async Task<IActionResult> OnGetAsync(int pageNumber = 1, string? q = null, DateTime? startDate = null, DateTime? endDate = null)
     {
-
         if (User.Identity?.IsAuthenticated != true)
         {
             return RedirectToPage("/NotAuthorized");
         }
         
         CurrentPage = pageNumber;
-        QueryString = queryString;
+        Q = q;
         StartDate = startDate;
         EndDate = endDate;
         
-        (Events, TotalCount) = await _eventService.GetPagedEventsAsync(CurrentPage, PageSize, QueryString, StartDate ?? DateTime.Now, EndDate);
+        (Events, TotalCount) = await _eventService.GetPagedEventsAsync(CurrentPage, PageSize, Q, StartDate ?? DateTime.Now, EndDate);
         return Page();
     }
 }

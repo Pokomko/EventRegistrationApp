@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Application.Interfaces;
+using AutoMapper;
 using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.Linq;
@@ -8,10 +9,13 @@ namespace Application.Services;
 
 public class EventService : IEventService
 {
-    readonly IEventRepository _eventRepository;
-    public EventService(IEventRepository eventRepository)
+    private readonly IEventRepository _eventRepository;
+    private readonly IMapper _mapper;
+
+    public EventService(IEventRepository eventRepository, IMapper mapper)
     {
         _eventRepository = eventRepository;
+        _mapper = mapper;
     }
 
     public async Task<List<EventDto>> GetAllEventsAsync()
@@ -34,7 +38,7 @@ public class EventService : IEventService
                 EventId = pe.EventId,
                 Participant = new ParticipantDto
                 {
-                    ParticipantId = pe.Participant.Id,
+                    Id = pe.Participant.Id,
                     FirstName = pe.Participant.FirstName,
                     LastName = pe.Participant.LastName,
                     BirthDate = pe.Participant.BirthDate
@@ -64,7 +68,7 @@ public class EventService : IEventService
                 EventId = pe.EventId,
                 Participant = new ParticipantDto
                 {
-                    ParticipantId = pe.Participant.Id,
+                    Id = pe.Participant.Id,
                     FirstName = pe.Participant.FirstName,
                     LastName = pe.Participant.LastName,
                     BirthDate = pe.Participant.BirthDate
@@ -93,7 +97,7 @@ public class EventService : IEventService
                 EventId = pe.EventId,
                 Participant = new ParticipantDto
                 {
-                    ParticipantId = pe.Participant.Id,
+                    Id = pe.Participant.Id,
                     FirstName = pe.Participant.FirstName,
                     LastName = pe.Participant.LastName,
                     BirthDate = pe.Participant.BirthDate
@@ -107,39 +111,26 @@ public class EventService : IEventService
     }
     public async Task CreateEventAsync(CreateEventDto newEventDto)
     {
-        var newEvent = new Event
-        {
-            Id = Guid.NewGuid(),
-            Title = newEventDto.Title,
-            Description = newEventDto.Description,
-            StartDateTime = newEventDto.StartDateTime,
-            Location = newEventDto.Location,
-            Category = newEventDto.Category,
-            MaxParticipants = newEventDto.MaxParticipants,
-            ImageUrl = newEventDto.ImageUrl,
-        };
+        var newEvent = _mapper.Map<Event>(newEventDto);
 
         await _eventRepository.CreateEventAsync(newEvent);
     }
 
-    public async Task EditEventAsync(UpdateEventDto updatedEvent)
+    public async Task EditEventAsync(UpdateEventDto updatedEventDto)
     {
-        var existingEvent = await _eventRepository.GetEventByIdAsync(updatedEvent.Id);
+        var existingEvent = await _eventRepository.GetEventByIdAsync(updatedEventDto.Id);
 
         if (existingEvent == null)
         {
-            throw new KeyNotFoundException($"Event with Id {updatedEvent.Id} not found.");
+            throw new KeyNotFoundException($"Мероприятие с Id {updatedEventDto.Id} не найден.");
         }
 
-        existingEvent.Title = updatedEvent.Title;
-        existingEvent.Description = updatedEvent.Description;
-        existingEvent.StartDateTime = updatedEvent.StartDateTime;
-        existingEvent.Location = updatedEvent.Location;
-        existingEvent.Category = updatedEvent.Category;
-        existingEvent.MaxParticipants = updatedEvent.MaxParticipants;
-        existingEvent.ImageUrl = updatedEvent.ImageUrl;
+        if (existingEvent.MaxParticipants > updatedEventDto.MaxParticipants)
+        {
+            throw new InvalidOperationException("Нельзя уменьшить количество участников ниже текущего значения.");
+        }
 
-        // check existingEvent.MaxParticipants > updatedEvent.MaxParticipants; !!!
+        _mapper.Map(updatedEventDto, existingEvent);
 
         await _eventRepository.EditEventAsync(existingEvent);
     }

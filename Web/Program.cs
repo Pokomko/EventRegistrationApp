@@ -1,8 +1,9 @@
-using System.Text;
+using Application;
+using Application.Interfaces;
 using Application.Services;
 using Domain.Enum;
-using Application.Interfaces;
 using Infrastructure;
+using System.Text;
 using Web.Endpoints;
 using Web.Extensions;
 using Web.Servicies;
@@ -31,6 +32,8 @@ public class Program
                 policy.Requirements.Add(new PermissionRequirment([PermissionsEnum.Create])));
         });
 
+        builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
+
         // Add services to the container.
         builder.AddInfrastructureServices();
 
@@ -43,6 +46,8 @@ public class Program
 
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IEventService, EventService>();
+        builder.Services.AddScoped<IParticipantService, ParticipantService>();
+        builder.Services.AddScoped<IEventRegistrationService, EventRegistrationService>();
         builder.Services.AddScoped<ICookieService, CookieService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IFileService, FileService>();

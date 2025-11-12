@@ -94,27 +94,30 @@
 
         <div class="participants-section">
             <h3>Участники (@Model.Event.Participants.Count)</h3>
-            @if (Model.Event.Participants.Any())
+            @if (Model.IsAdmin)
             {
-                <div class="participants-list">
-                    @foreach (var participant in Model.Event.Participants)
-                    {
-                        <div class="participant-item">
-                            <div class="participant-info">
-                                <span class="participant-name">
-                                    @participant.Participant.FirstName @participant.Participant.LastName
-                                </span>
-                                <span class="participant-date">
-                                    Зарегистрирован: @participant.RegisteredAt.ToString("dd.MM.yyyy HH:mm")
-                                </span>
+                @if (Model.Event.Participants.Any())
+                {
+                    <div class="participants-list">
+                        @foreach (var participant in Model.Event.Participants)
+                        {
+                            <div class="participant-item">
+                                <div class="participant-info">
+                                    <span class="participant-name">
+                                        @participant.Participant.FirstName @participant.Participant.LastName
+                                    </span>
+                                    <span class="participant-date">
+                                        Зарегистрирован: @participant.RegisteredAt.ToString("dd.MM.yyyy HH:mm")
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    }
-                </div>
-            }
-            else
-            {
-                <p class="no-participants">Пока никто не зарегистрирован</p>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="no-participants">Пока никто не зарегистрирован</p>
+                }
             }
         </div>
     }
